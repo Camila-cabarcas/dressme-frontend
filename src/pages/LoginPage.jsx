@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ArrowLeft, AlertTriangle, Loader2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
 import GlassContainer from '../components/GlassContainer';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginPage = ({ onBack }) => {
   const [submitState, setSubmitState] = useState('idle');
-  const [errorMessage, setErrorMessage] = useState(googleClientId ? '' : 'VITE_GOOGLE_CLIENT_ID no está configurado.');
-  const [successPayload, setSuccessPayload] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [scriptLoaded, setScriptLoaded] = useState(() => Boolean(window.google?.accounts?.id));
 
   const handleCredentialResponse = useCallback(async (response) => {
@@ -32,13 +31,26 @@ const LoginPage = ({ onBack }) => {
         }),
       });
 
-      const data = await loginResponse.json();
-
-      if (!loginResponse.ok) {
-        throw new Error(data?.message || 'Error al autenticar con el backend.');
+      // Leer el contenido de la respuesta de forma segura
+      let data = null;
+      const contentType = loginResponse.headers.get('content-type');
+      if (contentType?.includes('application/json')) {
+        const text = await loginResponse.text();
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch (parseError) {
+            console.error('Error parsing JSON response:', text, parseError);
+          }
+        }
       }
 
-      setSuccessPayload(data);
+      // Verificar el estado de la respuesta después de parsear
+      if (!loginResponse.ok) {
+        const errorMessage = data?.detail || data?.message || `Error HTTP ${loginResponse.status}`;
+        throw new Error(errorMessage);
+      }
+
       setSubmitState('success');
     } catch (error) {
       setSubmitState('error');
@@ -123,22 +135,12 @@ const LoginPage = ({ onBack }) => {
           </div>
 
           <div className="mt-10 grid gap-6">
-            <div className="rounded-3xl border border-brand-sand/60 bg-white/85 p-6 text-left">
-              <div className="flex items-center gap-3 mb-4">
-                <ShieldCheck className="w-5 h-5 text-brand-bronze" />
-                <span className="font-sans text-sm font-semibold text-brand-dark">Conexión directa al backend</span>
-              </div>
-              <p className="text-sm text-brand-dark/70 leading-relaxed">
-                El token de Google se valida en el gateway y luego se envía al orquestador interno para completar el login. No hay correo ni contraseña local en esta vista.
-              </p>
-            </div>
-
             <div className="rounded-3xl border border-brand-sand/60 bg-[#FAF8F5]/95 p-6 flex flex-col items-center justify-center gap-4">
               <div id="google-signin-button" className="w-full min-h-[52px]" />
 
               {!googleClientId && (
                 <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                  No se encontró un cliente de Google configurado. Ajusta <span className="font-semibold">VITE_GOOGLE_CLIENT_ID</span> en tu entorno.
+                  No se encontró un cliente de Google configurado. Añade <span className="font-semibold">VITE_GOOGLE_CLIENT_ID</span> a tu frontend y reinicia el servidor.
                 </div>
               )}
 
@@ -164,11 +166,6 @@ const LoginPage = ({ onBack }) => {
               )}
             </div>
 
-            {successPayload && (
-              <pre className="rounded-3xl border border-brand-sand/50 bg-[#F7F4EE] p-4 overflow-x-auto text-xs text-brand-dark/80">
-                {JSON.stringify(successPayload, null, 2)}
-              </pre>
-            )}
           </div>
         </GlassContainer>
       </div>
