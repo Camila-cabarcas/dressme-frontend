@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import OnboardingPage from './pages/OnboardingPage';
-// 1. IMPORTAR HOMEPAGE
-import HomePage from './pages/HomePage'; 
+import HomePage from './pages/HomePage';
+import WardrobeUploadPage from './pages/WardrobeUploadPage';
 
 function App() {
-  // 2. RECUPERAR SESIÓN AL RECARGAR LA PÁGINA
+  // RECUPERAR SESIÓN AL RECARGAR LA PÁGINA
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('dressme_user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -16,7 +16,8 @@ function App() {
     const savedUser = localStorage.getItem('dressme_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      return parsedUser.isCalibrated ? 'home' : 'onboarding';
+      // Después de calibración → ir a wardrobeUpload
+      return parsedUser.isCalibrated ? 'wardrobeUpload' : 'onboarding';
     }
     return 'landing';
   });
@@ -33,7 +34,8 @@ function App() {
     if (!userData.isCalibrated) {
       setCurrentView('onboarding');
     } else {
-      setCurrentView('home');
+      // Después de calibración → ir a wardrobeUpload
+      setCurrentView('wardrobeUpload');
     }
   };
 
@@ -60,13 +62,28 @@ function App() {
         onCalibrationCompleted={(updatedUser) => {
           // Actualizar estado cuando finalice el onboarding
           setUser(updatedUser);
-          setCurrentView('home');
+          localStorage.setItem('dressme_user', JSON.stringify(updatedUser));
+          setCurrentView('wardrobeUpload');
         }}
       />
     );
   }
 
-  // 3. EL BLOQUE FALTANTE PARA MOSTRAR EL HOME
+  // WardrobeUpload: Cargar prendas al armario virtual
+  if (currentView === 'wardrobeUpload') {
+    return (
+      <WardrobeUploadPage 
+        user={user} 
+        onLogout={handleLogout} 
+        onUploadComplete={() => {
+          // Después de subir prenda (o continuar sin subir) → ir a home
+          setCurrentView('home');
+        }} 
+      />
+    );
+  }
+
+  // HOME: Dashboard principal (después de calibración y carga de prendas)
   if (currentView === 'home') {
     return (
       <HomePage 
