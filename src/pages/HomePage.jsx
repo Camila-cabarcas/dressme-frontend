@@ -15,7 +15,7 @@ import {
   Wand2,
 } from 'lucide-react';
 
-const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe }) => {
+const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage }) => {
   const [activeNav, setActiveNav] = useState('home');
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [favoriteOutfits, setFavoriteOutfits] = useState(new Set());
@@ -123,7 +123,12 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe }) => {
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveNav(item.id)}
+              onClick={() => {
+                setActiveNav(item.id);
+                if (item.id === 'wardrobe' && onGoToWardrobePage) {
+                  onGoToWardrobePage();
+                }
+              }}
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium ${
                 activeNav === item.id
                   ? 'bg-brand-charcoal text-white'
