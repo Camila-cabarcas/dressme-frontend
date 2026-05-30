@@ -253,14 +253,17 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe }) => {
                   </div>
                 ))}
 
-                <div className="flex-shrink-0 w-40 snap-center cursor-pointer">
-                  <div
+                <div className="flex-shrink-0 w-40 snap-center">
+                  <button
                     onClick={() => onGoToWardrobe && onGoToWardrobe()}
-                    className="rounded-2xl h-40 mb-2 flex items-center justify-center border-2 border-dashed border-brand-dark/30 bg-transparent"
+                    className="w-full rounded-2xl h-40 mb-2 flex items-center justify-center border-2 border-dashed border-brand-dark/30 bg-transparent cursor-pointer"
+                    aria-label="Agregar prenda"
                   >
                     <Plus className="w-10 h-10 text-brand-dark/60" />
-                  </div>
-                  <p className="text-sm text-brand-dark/40 text-center">Agregar prenda</p>
+                  </button>
+                  <button onClick={() => onGoToWardrobe && onGoToWardrobe()} className="text-sm text-brand-dark/40 text-center w-full mt-1">
+                    Agregar prenda
+                  </button>
                 </div>
               </div>
             )}
@@ -412,7 +415,10 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe }) => {
                 </div>
                 <h3 className="text-xl font-serif font-bold text-brand-dark mb-2">Aún no tienes favoritos</h3>
                 <p className="text-sm text-brand-dark/60 mb-6">Genera recomendaciones de outfits con IA y guarda los que más te gusten</p>
-                <button onClick={() => onGoToOnboarding && onGoToOnboarding()} className="btn-shimmer px-6 py-3 bg-brand-charcoal text-white rounded-full font-medium">
+                <button
+                  onClick={() => console.log('Favoritos: placeholder - vista no implementada')}
+                  className="btn-shimmer px-6 py-3 bg-brand-charcoal text-white rounded-full font-medium"
+                >
                   Generar outfits con IA
                 </button>
               </div>
