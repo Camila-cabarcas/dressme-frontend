@@ -90,3 +90,37 @@ html, body {
   100% { background-position: 0% 50% }
 }
 
+/* Button shimmer effect (fast, subtle) */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.4s ease-out;
+  pointer-events: none;
+}
+.btn-shimmer:hover::before {
+  left: 160%;
+}
+
+/* Subtle content-area texture/pattern to add warmth (very low opacity) */
+.content-bg {
+  position: relative;
+}
+.content-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(90deg, rgba(44,42,41,0.03) 0 1px, transparent 1px 28px);
+  opacity: 0.05;
+  pointer-events: none;
+}
+

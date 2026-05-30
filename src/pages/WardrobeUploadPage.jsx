@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Cloud, LogOut, ChevronDown, Loader2, AlertCircle } from 'lucide-react';
 import GlassContainer from '../components/GlassContainer';
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:9000';
+
 const WardrobeUploadPage = ({ user, onLogout, onUploadComplete }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -88,23 +90,64 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete }) => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
-      setUploadError('Por favor selecciona una imagen o usa Continuar para saltar este paso');
+      setUploadError('Por favor selecciona una imagen');
       return;
     }
 
     setIsUploading(true);
     setUploadError('');
-    setUploadSuccess(true);
 
-    window.setTimeout(() => {
-      if (onUploadComplete) {
-        onUploadComplete(selectedFile);
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${apiBaseUrl}/api/v1/wardrobe/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorMessage = `Error ${response.status}`;
+        
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // Si no hay JSON response, usar el mensaje genérico
+          if (response.status === 500) {
+            errorMessage = 'Error del servidor. Verifica que el archivo sea válido y no exceda 1MB.';
+          } else if (response.status === 413) {
+            errorMessage = 'El archivo es demasiado grande. Máximo 1MB permitido.';
+          } else if (response.status === 400) {
+            errorMessage = 'Solicitud inválida. Verifica el formato del archivo.';
+          } else if (response.status === 401) {
+            errorMessage = 'Sesión expirada. Por favor inicia sesión de nuevo.';
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
+
+      setUploadSuccess(true);
       setSelectedFile(null);
+
+      // Redirigir después de 2 segundos
+      setTimeout(() => {
+        if (onUploadComplete) {
+          onUploadComplete();
+        }
+      }, 2000);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Error al subir la imagen');
+    } finally {
       setIsUploading(false);
-    }, 700);
+    }
   };
 
   const handleLogout = () => {
@@ -315,7 +358,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete }) => {
                 onClick={() => {
                   // Redirigir a la siguiente vista sin subir
                   if (onUploadComplete) {
-                    onUploadComplete(null);
+                    onUploadComplete();
                   }
                 }}
                 className="px-8 py-4 rounded-full font-semibold text-base md:text-lg transition-all duration-300 border-2 border-brand-dark text-brand-dark hover:bg-brand-dark/5"

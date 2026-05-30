@@ -89,7 +89,8 @@ function App() {
       <HomePage 
         user={user} 
         onLogout={handleLogout} 
-        onGoToOnboarding={() => setCurrentView('onboarding')} 
+        onGoToOnboarding={() => setCurrentView('onboarding')}
+        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
       />
     );
   }
