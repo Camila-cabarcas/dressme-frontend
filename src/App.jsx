@@ -102,7 +102,6 @@ function App() {
         onGoToOutfits={() => setCurrentView('outfits')}
         onGoToFavorites={() => setCurrentView('favorites')}
         onGoToConfig={() => setCurrentView('config')}
-        prendas={[]}
         estilos={[]}
         ocasiones={[]}
         colores={[]}

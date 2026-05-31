@@ -10,7 +10,56 @@ import {
   LogOut,
   Plus,
   ShoppingBag,
+  Tag,
+  Palette,
+  Sparkles,
+  Layers,
+  Pencil,
+  Trash2,
+  X,
 } from 'lucide-react';
+
+// TODO: quitar mock
+const mockPrendas = [
+  {
+    id: 1,
+    name: 'Blazer Camel Estructurado',
+    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80',
+    style: 'Clásico',
+    type: 'Blazer',
+    category: 'Parte superior',
+    color: 'Camel',
+    ocasion: 'Trabajo',
+    clima: 'Templado',
+  },
+  {
+    id: 2,
+    name: 'Vestido Midi Floral',
+    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80',
+    style: 'Romántico',
+    type: 'Vestido',
+    category: 'Vestidos',
+    color: 'Multicolor',
+    ocasion: 'Casual',
+    clima: 'Cálido',
+  },
+];
+
+const TIPOS_POR_CATEGORIA = {
+  'Tops':              ['Camiseta', 'Camisa', 'Blusa', 'Suéter', 'Sudadera', 'Top', 'Crop Top'],
+  'Parte Inferior':    ['Jeans', 'Pantalón', 'Shorts', 'Falda', 'Leggings', 'Joggers'],
+  'Ropa de Abrigo':    ['Chaqueta', 'Abrigo', 'Blazer', 'Chaleco'],
+  'Vestidos y Monos':  ['Vestido', 'Mono', 'Enterizo'],
+  'Calzado':           ['Tenis', 'Botas', 'Mocasines y Oxford', 'Sandalias', 'Tacones'],
+  'Accesorios':        ['Bolso', 'Sombrero', 'Bufanda y Cinturón', 'Joyería'],
+  'Ropa Deportiva':    ['Top Deportivo', 'Shorts Deportivos', 'Chaqueta Deportiva'],
+};
+
+const ESTILOS_MOCK = [
+  'Atletico', 'Bohemio', 'Casual de Negocios', 'Formal Clásico', 'Costero',
+  'Cottagecore', 'dark-Academy', 'Vanguardista', 'Minimalista', 'Smart-Casual',
+  'Streetwear', 'Y2K Retro',
+];
 
 const WardrobePage = ({
   user,
@@ -20,7 +69,7 @@ const WardrobePage = ({
   onGoToOutfits,
   onGoToFavorites,
   onGoToConfig,
-  prendas = [],
+  prendas = mockPrendas,
   estilos = [],
   ocasiones = [],
   colores = [],
@@ -32,7 +81,12 @@ const WardrobePage = ({
   const emptyFilters = { estilo: '', ocasion: '', color: '', clima: '', tipoPrenda: '', categoria: '' };
   const [filters, setFilters] = useState(emptyFilters);
   const [appliedFilters, setAppliedFilters] = useState(emptyFilters);
-  const profileMenuRef = useRef(null);
+  const profileMenuRef                              = useRef(null);
+  const [selectedPrenda,    setSelectedPrenda]    = useState(null);
+  const [editMode,          setEditMode]          = useState(false);
+  const [editFields,        setEditFields]        = useState({ category: '', type: '', style: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [toast,             setToast]             = useState('');
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -70,6 +124,37 @@ const WardrobePage = ({
   const handleClearFilters = () => {
     setFilters(emptyFilters);
     setAppliedFilters(emptyFilters);
+  };
+
+  const openModal = (prenda) => {
+    setSelectedPrenda(prenda);
+    setEditMode(false);
+    setEditFields({ category: prenda.category || '', type: prenda.type || '', style: prenda.style || '' });
+    setShowDeleteConfirm(false);
+  };
+
+  const closeModal = () => {
+    setSelectedPrenda(null);
+    setEditMode(false);
+    setShowDeleteConfirm(false);
+  };
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2500);
+  };
+
+  const handleSave = () => {
+    // TODO: conectar con API
+    setSelectedPrenda((prev) => ({ ...prev, ...editFields }));
+    setEditMode(false);
+    showToast('Cambios guardados');
+  };
+
+  const handleDelete = () => {
+    // TODO: conectar con API DELETE
+    closeModal();
+    showToast('Prenda eliminada');
   };
 
   const prendasFiltradas = prendas.filter((p) => {
@@ -334,17 +419,23 @@ const WardrobePage = ({
 
           {/* Grid de prendas o estado vacío */}
           {prendas.length > 0 ? (
-            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-4 gap-3">
               {prendasFiltradas.map((prenda) => (
-                <div key={prenda.id} className="rounded-3xl bg-white shadow-[0_12px_40px_rgba(44,42,41,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_18px_60px_rgba(44,42,41,0.1)] overflow-hidden">
-                  <div className="h-64 overflow-hidden bg-brand-sand/30">
-                    <img src={prenda.image} alt={prenda.name} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                <button
+                  key={prenda.id}
+                  onClick={() => openModal(prenda)}
+                  className="relative group aspect-square rounded-2xl overflow-hidden focus:outline-none"
+                >
+                  <img
+                    src={prenda.image}
+                    alt={prenda.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-brand-dark/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1 px-3">
+                    <p className="text-white text-sm font-semibold text-center leading-tight">{prenda.name}</p>
+                    <p className="text-white/75 text-xs text-center">{prenda.style} — {prenda.type}</p>
                   </div>
-                  <div className="p-4">
-                    <p className="text-sm font-semibold text-brand-dark mb-1">{prenda.name}</p>
-                    <p className="text-xs text-brand-dark/60">{prenda.style} — {prenda.type}</p>
-                  </div>
-                </div>
+                </button>
               ))}
             </div>
           ) : (
@@ -365,6 +456,201 @@ const WardrobePage = ({
           )}
         </section>
       </main>
+
+      {/* ── PANEL DE DETALLE ──────────────────────────────── */}
+      {selectedPrenda && (
+        <div
+          className="fixed inset-0 bg-brand-dark/60 z-[100] flex items-center justify-center p-8"
+          onClick={closeModal}
+        >
+          <div
+            className="relative bg-white rounded-3xl overflow-hidden flex w-full max-w-3xl shadow-[0_32px_80px_rgba(44,42,41,0.25)]"
+            style={{ maxHeight: '80vh' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón cerrar */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-brand-sand/80 backdrop-blur-sm flex items-center justify-center hover:bg-brand-sand transition-colors"
+            >
+              <X className="w-4 h-4 text-brand-dark" />
+            </button>
+
+            {/* Imagen */}
+            <div className="w-1/2 flex-shrink-0">
+              <img
+                src={selectedPrenda.image}
+                alt={selectedPrenda.name}
+                className="w-full h-full object-cover"
+                style={{ maxHeight: '80vh' }}
+              />
+            </div>
+
+            {/* Detalles */}
+            <div className="flex-1 p-8 overflow-y-auto flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-6">
+                <h2 className="text-2xl font-serif font-bold text-brand-dark leading-tight pr-8">
+                  {selectedPrenda.name}
+                </h2>
+                <div className="flex flex-col gap-5">
+                  {/* Categoría */}
+                  <div className="flex items-center gap-3">
+                    <Tag className="w-4 h-4 text-brand-dark/40 flex-shrink-0" />
+                    <span className="text-xs text-brand-dark/40 w-28 flex-shrink-0">Categoría</span>
+                    {editMode ? (
+                      <div className="relative flex-1">
+                        <select
+                          value={editFields.category}
+                          onChange={(e) => setEditFields((p) => ({ ...p, category: e.target.value, type: '' }))}
+                          className="w-full appearance-none text-sm text-brand-dark font-medium bg-brand-cream border border-brand-sand rounded-xl px-3 py-1 pr-7 outline-none focus:border-brand-dark/30 cursor-pointer"
+                        >
+                          <option value="">— Selecciona —</option>
+                          {Object.keys(TIPOS_POR_CATEGORIA).map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-brand-dark/40" />
+                      </div>
+                    ) : (
+                      <span className="text-sm text-brand-dark font-medium">{selectedPrenda.category || '—'}</span>
+                    )}
+                  </div>
+                  {/* Tipo de prenda — dependiente de Categoría */}
+                  <div className="flex items-center gap-3">
+                    <Layers className="w-4 h-4 text-brand-dark/40 flex-shrink-0" />
+                    <span className="text-xs text-brand-dark/40 w-28 flex-shrink-0">Tipo de prenda</span>
+                    {editMode ? (
+                      <div className="relative flex-1">
+                        <select
+                          value={editFields.type}
+                          disabled={!editFields.category}
+                          onChange={(e) => setEditFields((p) => ({ ...p, type: e.target.value }))}
+                          className="w-full appearance-none text-sm text-brand-dark font-medium bg-brand-cream border border-brand-sand rounded-xl px-3 py-1 pr-7 outline-none focus:border-brand-dark/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <option value="">{editFields.category ? '— Selecciona —' : 'Selecciona primero una categoría'}</option>
+                          {(TIPOS_POR_CATEGORIA[editFields.category] || []).map((tipo) => (
+                            <option key={tipo} value={tipo}>{tipo}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-brand-dark/40" />
+                      </div>
+                    ) : (
+                      <span className="text-sm text-brand-dark font-medium">{selectedPrenda.type || '—'}</span>
+                    )}
+                  </div>
+                  {/* Color principal — no editable */}
+                  <div className="flex items-center gap-3">
+                    <Palette className="w-4 h-4 text-brand-dark/40 flex-shrink-0" />
+                    <span className="text-xs text-brand-dark/40 w-28 flex-shrink-0">Color principal</span>
+                    <span className="text-sm text-brand-dark font-medium">{selectedPrenda.color || '—'}</span>
+                  </div>
+                  {/* Estilo */}
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-4 h-4 text-brand-dark/40 flex-shrink-0" />
+                    <span className="text-xs text-brand-dark/40 w-28 flex-shrink-0">Estilo</span>
+                    {editMode ? (
+                      <div className="relative flex-1">
+                        <select
+                          value={editFields.style}
+                          onChange={(e) => setEditFields((p) => ({ ...p, style: e.target.value }))}
+                          className="w-full appearance-none text-sm text-brand-dark font-medium bg-brand-cream border border-brand-sand rounded-xl px-3 py-1 pr-7 outline-none focus:border-brand-dark/30 cursor-pointer"
+                        >
+                          <option value="">— Selecciona —</option>
+                          {ESTILOS_MOCK.map((estilo) => (
+                            <option key={estilo} value={estilo}>{estilo}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-brand-dark/40" />
+                      </div>
+                    ) : (
+                      <span className="text-sm text-brand-dark font-medium">{selectedPrenda.style || '—'}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer del panel */}
+              <div className="flex items-center justify-between pt-4 border-t border-brand-sand/50">
+                {/* Eliminar — izquierda */}
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-500 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Eliminar prenda
+                </button>
+
+                {/* Editar / Guardar / Cancelar — derecha */}
+                {editMode ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setEditMode(false);
+                        setEditFields({ category: selectedPrenda.category || '', type: selectedPrenda.type || '', style: selectedPrenda.style || '' });
+                      }}
+                      className="btn-shimmer relative inline-flex items-center rounded-full bg-brand-sand px-4 py-1.5 text-xs font-medium text-brand-dark transition-all duration-300 hover:bg-brand-sand/70 overflow-hidden"
+                    >
+                      <span className="relative z-10">Cancelar</span>
+                    </button>
+                    <button
+                      onClick={handleSave}
+                      className="btn-shimmer relative inline-flex items-center rounded-full bg-brand-charcoal px-4 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                    >
+                      <span className="relative z-10">Guardar</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setEditMode(true);
+                      setEditFields({ category: selectedPrenda.category || '', type: selectedPrenda.type || '', style: selectedPrenda.style || '' });
+                    }}
+                    className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-sand px-4 py-1.5 text-xs font-medium text-brand-dark transition-all duration-300 hover:bg-brand-sand/70 overflow-hidden"
+                  >
+                    <Pencil className="w-3.5 h-3.5 relative z-10" />
+                    <span className="relative z-10">Editar</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* ── CONFIRMACIÓN DE ELIMINACIÓN ─────────────────── */}
+            {showDeleteConfirm && (
+              <div
+                className="absolute inset-0 bg-brand-dark/40 rounded-3xl flex items-center justify-center p-8"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-[0_16px_48px_rgba(44,42,41,0.2)] flex flex-col gap-5">
+                  <p className="text-sm font-medium text-brand-dark text-center leading-relaxed">
+                    ¿Estás segura de que quieres eliminar esta prenda?
+                  </p>
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="btn-shimmer relative inline-flex items-center rounded-full bg-brand-sand px-5 py-2 text-xs font-medium text-brand-dark transition-all duration-300 hover:bg-brand-sand/70 overflow-hidden"
+                    >
+                      <span className="relative z-10">Cancelar</span>
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      className="inline-flex items-center rounded-full bg-red-500 px-5 py-2 text-xs font-medium text-white hover:bg-red-600 transition-colors"
+                    >
+                      Sí, eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── TOAST ─────────────────────────────────────────── */}
+      {toast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-full bg-white shadow-[0_8px_32px_rgba(44,42,41,0.15)] border border-brand-sand flex items-center gap-2 pointer-events-none">
+          <span className="text-sm font-medium text-green-600">{toast}</span>
+        </div>
+      )}
     </div>
   );
 };
