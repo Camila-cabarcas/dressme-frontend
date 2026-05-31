@@ -15,8 +15,7 @@ import {
   Wand2,
 } from 'lucide-react';
 
-const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage }) => {
-  const [activeNav, setActiveNav] = useState('home');
+const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage, onGoToOutfits, onGoToFavorites, onGoToConfig }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [favoriteOutfits, setFavoriteOutfits] = useState(new Set());
   const profileMenuRef = useRef(null);
@@ -99,38 +98,17 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
         {/* Menu Navigation */}
         <nav className="flex flex-col gap-3 flex-1 mt-12">
           {[
-            { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5" /> },
-            {
-              id: 'wardrobe',
-              label: 'Mi Armario',
-              icon: <Shirt className="w-5 h-5" />,
-            },
-            {
-              id: 'outfits',
-              label: 'Outfits',
-              icon: <Zap className="w-5 h-5" />,
-            },
-            {
-              id: 'favorites',
-              label: 'Favoritos',
-              icon: <Heart className="w-5 h-5" />,
-            },
-            {
-              id: 'settings',
-              label: 'Configuración',
-              icon: <Settings className="w-5 h-5" />,
-            },
+            { id: 'home', label: 'Inicio', icon: <Home className="w-5 h-5" />, action: null },
+            { id: 'wardrobe', label: 'Mi Armario', icon: <Shirt className="w-5 h-5" />, action: onGoToWardrobePage },
+            { id: 'outfits', label: 'Outfits', icon: <Zap className="w-5 h-5" />, action: onGoToOutfits },
+            { id: 'favorites', label: 'Favoritos', icon: <Heart className="w-5 h-5" />, action: onGoToFavorites },
+            { id: 'settings', label: 'Configuración', icon: <Settings className="w-5 h-5" />, action: onGoToConfig },
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => {
-                setActiveNav(item.id);
-                if (item.id === 'wardrobe' && onGoToWardrobePage) {
-                  onGoToWardrobePage();
-                }
-              }}
+              onClick={() => item.action && item.action()}
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium ${
-                activeNav === item.id
+                item.id === 'home'
                   ? 'bg-brand-charcoal text-white'
                   : 'text-brand-dark hover:bg-brand-sand/40'
               }`}
@@ -213,12 +191,12 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               <h2 className="text-2xl font-serif font-bold text-brand-dark">
                 Mi Armario
               </h2>
-              <a
-                href="#"
+              <button
+                onClick={() => onGoToWardrobePage && onGoToWardrobePage()}
                 className="text-sm font-medium text-brand-dark hover:text-brand-dark/70 transition-colors"
               >
                 Ver Todo →
-              </a>
+              </button>
             </div>
 
             {mockGarments.length > 0 ? (
@@ -288,7 +266,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 <p className="text-brand-dark/70 text-sm mb-6">
                   Combina tus prendas y crea looks únicos con la ayuda de nuestra IA
                 </p>
-                <button className="btn-shimmer relative px-6 py-3 bg-brand-charcoal text-white rounded-full font-medium overflow-hidden transition-all duration-300">
+                <button onClick={() => onGoToOutfits && onGoToOutfits()} className="btn-shimmer relative px-6 py-3 bg-brand-charcoal text-white rounded-full font-medium overflow-hidden transition-all duration-300">
                   <span className="relative z-10">+ Empezar a Crear</span>
                 </button>
               </div>
@@ -313,12 +291,12 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                   Combinaciones creadas especialmente para tu estilo
                 </p>
               </div>
-              <a
-                href="#"
+              <button
+                onClick={() => onGoToOutfits && onGoToOutfits()}
                 className="text-sm font-medium text-brand-dark hover:text-brand-dark/70 transition-colors"
               >
                 Ver Más →
-              </a>
+              </button>
             </div>
 
             {mockOutfits.length > 0 ? (
@@ -421,7 +399,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 <h3 className="text-xl font-serif font-bold text-brand-dark mb-2">Aún no tienes favoritos</h3>
                 <p className="text-sm text-brand-dark/60 mb-6">Genera recomendaciones de outfits con IA y guarda los que más te gusten</p>
                 <button
-                  onClick={() => console.log('Favoritos: placeholder - vista no implementada')}
+                  onClick={() => onGoToOutfits && onGoToOutfits()}
                   className="btn-shimmer px-6 py-3 bg-brand-charcoal text-white rounded-full font-medium"
                 >
                   Generar outfits con IA

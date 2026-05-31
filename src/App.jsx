@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import OnboardingPage from './pages/OnboardingPage';
 import HomePage from './pages/HomePage';
 import WardrobeUploadPage from './pages/WardrobeUploadPage';
+import WardrobePage from './pages/WardrobePage';
+import OutfitsPage from './pages/OutfitsPage';
+import FavoritesPage from './pages/FavoritesPage';
+import ConfigPage from './pages/ConfigPage';
 
 function App() {
   // RECUPERAR SESIÓN AL RECARGAR LA PÁGINA
@@ -16,25 +20,19 @@ function App() {
     const savedUser = localStorage.getItem('dressme_user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      // Después de calibración → ir a wardrobeUpload
-      return parsedUser.isCalibrated ? 'wardrobeUpload' : 'onboarding';
+      return parsedUser.isCalibrated ? 'home' : 'onboarding';
     }
     return 'landing';
   });
 
   const handleLoginSuccess = (userData) => {
     console.log('Login recibido:', userData);
-    
-    // Guardar tokens y usuario en LocalStorage para no perder sesión
     localStorage.setItem('authToken', userData.token);
     localStorage.setItem('dressme_user', JSON.stringify(userData));
     setUser(userData);
-
-    // Redirigir según estado de calibración
     if (!userData.isCalibrated) {
       setCurrentView('onboarding');
     } else {
-      // Después de calibración → ir a wardrobeUpload
       setCurrentView('wardrobeUpload');
     }
   };
@@ -57,10 +55,9 @@ function App() {
 
   if (currentView === 'onboarding') {
     return (
-      <OnboardingPage 
-        user={user} 
+      <OnboardingPage
+        user={user}
         onCalibrationCompleted={(updatedUser) => {
-          // Actualizar estado cuando finalice el onboarding
           setUser(updatedUser);
           localStorage.setItem('dressme_user', JSON.stringify(updatedUser));
           setCurrentView('wardrobeUpload');
@@ -69,28 +66,101 @@ function App() {
     );
   }
 
-  // WardrobeUpload: Cargar prendas al armario virtual
   if (currentView === 'wardrobeUpload') {
     return (
-      <WardrobeUploadPage 
-        user={user} 
-        onLogout={handleLogout} 
-        onUploadComplete={() => {
-          // Después de subir prenda (o continuar sin subir) → ir a home
-          setCurrentView('home');
-        }} 
+      <WardrobeUploadPage
+        user={user}
+        onLogout={handleLogout}
+        onUploadComplete={() => setCurrentView('home')}
       />
     );
   }
 
-  // HOME: Dashboard principal (después de calibración y carga de prendas)
   if (currentView === 'home') {
     return (
-      <HomePage 
-        user={user} 
-        onLogout={handleLogout} 
+      <HomePage
+        user={user}
+        onLogout={handleLogout}
         onGoToOnboarding={() => setCurrentView('onboarding')}
         onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToWardrobePage={() => setCurrentView('wardrobePage')}
+        onGoToOutfits={() => setCurrentView('outfits')}
+        onGoToFavorites={() => setCurrentView('favorites')}
+        onGoToConfig={() => setCurrentView('config')}
+      />
+    );
+  }
+
+  if (currentView === 'wardrobePage') {
+    return (
+      <WardrobePage
+        user={user}
+        onLogout={handleLogout}
+        onAddCloth={() => setCurrentView('wardrobeUpload')}
+        onGoToHome={() => setCurrentView('home')}
+        onGoToWardrobePage={() => setCurrentView('wardrobePage')}
+        onGoToOutfits={() => setCurrentView('outfits')}
+        onGoToFavorites={() => setCurrentView('favorites')}
+        onGoToConfig={() => setCurrentView('config')}
+        prendas={[]}
+        estilos={[]}
+        ocasiones={[]}
+        colores={[]}
+        climas={[]}
+        tiposPrenda={[]}
+        categorias={[]}
+      />
+    );
+  }
+
+  if (currentView === 'outfits') {
+    return (
+      <OutfitsPage
+        user={user}
+        onLogout={handleLogout}
+        onGoToHome={() => setCurrentView('home')}
+        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToWardrobePage={() => setCurrentView('wardrobePage')}
+        onGoToOutfits={() => setCurrentView('outfits')}
+        onGoToFavorites={() => setCurrentView('favorites')}
+        onGoToConfig={() => setCurrentView('config')}
+        ocasiones={[]}
+        climas={[]}
+        dressCodes={[]}
+        hasPrendas={false}
+      />
+    );
+  }
+
+  if (currentView === 'favorites') {
+    return (
+      <FavoritesPage
+        user={user}
+        onLogout={handleLogout}
+        onGoToHome={() => setCurrentView('home')}
+        onGoToWardrobePage={() => setCurrentView('wardrobePage')}
+        onGoToOutfits={() => setCurrentView('outfits')}
+        onGoToFavorites={() => setCurrentView('favorites')}
+        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToConfig={() => setCurrentView('config')}
+        ocasiones={[]}
+        climas={[]}
+        dressCodes={[]}
+        favoritosData={[]}
+      />
+    );
+  }
+
+  if (currentView === 'config') {
+    return (
+      <ConfigPage
+        user={user}
+        onLogout={handleLogout}
+        onGoToHome={() => setCurrentView('home')}
+        onGoToWardrobePage={() => setCurrentView('wardrobePage')}
+        onGoToOutfits={() => setCurrentView('outfits')}
+        onGoToFavorites={() => setCurrentView('favorites')}
+        onGoToOnboarding={() => setCurrentView('onboarding')}
       />
     );
   }

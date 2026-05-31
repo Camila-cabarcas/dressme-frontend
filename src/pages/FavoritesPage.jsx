@@ -1,0 +1,531 @@
+import { useEffect, useRef, useState } from 'react';
+import {
+  Home,
+  Shirt,
+  Zap,
+  Heart,
+  Settings,
+  HelpCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  MapPin,
+  Cloud,
+  Tag,
+  Sparkles,
+  Wand2,
+  ShoppingBag,
+} from 'lucide-react';
+
+// VISIBLE cards shown at once in the carousel
+const VISIBLE = 3;
+
+// Ghost carousel data — placeholders until real outfits arrive
+const ghostCarouselCards = [
+  { id: 1, name: 'Outfit Recomendado 1', ocasion: 'Casual',  clima: 'Templado', dressCode: 'Smart Casual' },
+  { id: 2, name: 'Outfit Recomendado 2', ocasion: 'Trabajo', clima: 'Frío',     dressCode: 'Business'     },
+  { id: 3, name: 'Outfit Recomendado 3', ocasion: 'Casual',  clima: 'Cálido',   dressCode: 'Casual'       },
+  { id: 4, name: 'Outfit Recomendado 4', ocasion: 'Formal',  clima: 'Templado', dressCode: 'Black Tie'    },
+  { id: 5, name: 'Outfit Recomendado 5', ocasion: 'Social',  clima: 'Templado', dressCode: 'Smart Casual' },
+];
+
+// Icon pool for ghost cards
+const GHOST_ICONS = [Sparkles, Wand2, ShoppingBag, Shirt, Heart];
+
+const GHOST_NUM    = ghostCarouselCards.length;              // 5
+const MAX_INDEX    = GHOST_NUM - VISIBLE;                    // 2
+const NUM_DOTS     = GHOST_NUM - VISIBLE + 1;                // 3
+// Each card = 1/VISIBLE of the track container width (33.33%)
+// translateX step = (100/VISIBLE)% of the track element width (same value)
+const STEP_PCT     = 100 / VISIBLE;                          // 33.333…
+
+const FavoritesPage = ({
+  user,
+  onLogout,
+  onGoToHome,
+  onGoToWardrobePage,
+  onGoToOutfits,
+  onGoToFavorites,
+  onGoToConfig,
+  onGoToWardrobe,
+  ocasiones   = [],
+  climas      = [],
+  dressCodes  = [],
+  favoritosData = [],
+}) => {
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [carouselIndex,   setCarouselIndex]   = useState(0);
+  const [isPaused,        setIsPaused]         = useState(false);
+  const [filters,         setFilters]          = useState({ ocasion: '', clima: '', dressCode: '' });
+  const [appliedFilters,  setAppliedFilters]   = useState({ ocasion: '', clima: '', dressCode: '' });
+  const [favoritos,       setFavoritos]        = useState(favoritosData);
+  const profileMenuRef = useRef(null);
+
+  // Auth guard
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    const userData  = localStorage.getItem('dressme_user');
+    if (!authToken || !userData) window.location.href = '/login';
+  }, []);
+
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Auto-slide every 3 s — pauses on hover, only runs when there is real data
+  useEffect(() => {
+    if (isPaused || favoritosData.length === 0) return;
+    const timer = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % NUM_DOTS);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [isPaused, carouselIndex, favoritosData.length]);
+
+  const getInitials = (name) => {
+    if (!name) return 'DM';
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
+  };
+
+  const handlePrev = () =>
+    setCarouselIndex((p) => (p - 1 + NUM_DOTS) % NUM_DOTS);
+
+  const handleNext = () =>
+    setCarouselIndex((p) => (p + 1) % NUM_DOTS);
+
+  const handleRemoveFavorite = (id) =>
+    setFavoritos((prev) => prev.filter((f) => f.id !== id));
+
+  const handleApplyFilters = () => setAppliedFilters({ ...filters });
+
+  const handleClearFilters = () => {
+    const empty = { ocasion: '', clima: '', dressCode: '' };
+    setFilters(empty);
+    setAppliedFilters(empty);
+  };
+
+  const favoritosFiltrados = favoritos.filter((f) => {
+    if (appliedFilters.ocasion   && f.ocasion   !== appliedFilters.ocasion)   return false;
+    if (appliedFilters.clima     && f.clima     !== appliedFilters.clima)     return false;
+    if (appliedFilters.dressCode && f.dressCode !== appliedFilters.dressCode) return false;
+    return true;
+  });
+
+  return (
+    <div className="min-h-screen bg-brand-cream">
+
+      {/* ── SIDEBAR ─────────────────────────────────────────── */}
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r border-brand-sand flex flex-col justify-between p-6 z-50">
+        <div>
+          <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
+            DressMe
+          </div>
+          <nav className="flex flex-col gap-3 mt-12">
+            <button
+              onClick={() => onGoToHome && onGoToHome()}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+            >
+              <Home className="w-5 h-5" /> Inicio
+            </button>
+            <button
+              onClick={() => onGoToWardrobePage && onGoToWardrobePage()}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+            >
+              <Shirt className="w-5 h-5" /> Mi Armario
+            </button>
+            <button
+              onClick={() => onGoToOutfits && onGoToOutfits()}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+            >
+              <Zap className="w-5 h-5" /> Outfits
+            </button>
+            <button className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-charcoal text-white text-sm font-medium">
+              <Heart className="w-5 h-5" /> Favoritos
+            </button>
+            <button
+              onClick={() => onGoToConfig && onGoToConfig()}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+            >
+              <Settings className="w-5 h-5" /> Configuración
+            </button>
+          </nav>
+        </div>
+        <button className="flex items-center gap-3 px-4 py-3 rounded-2xl text-brand-dark/60 hover:text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 text-sm font-medium">
+          <HelpCircle className="w-5 h-5" /> Ayuda
+        </button>
+      </aside>
+
+      {/* ── MAIN ────────────────────────────────────────────── */}
+      <main className="ml-64">
+
+        {/* HEADER */}
+        <header className="bg-brand-cream border-b border-brand-sand px-8 py-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-serif font-bold text-brand-dark mb-2">Mis Favoritos</h1>
+            <p className="text-brand-dark/60 font-sans text-sm">Outfits que la IA eligió para ti</p>
+          </div>
+
+          {/* Profile */}
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
+              {user?.profilePicture ? (
+                <img
+                  src={user.profilePicture}
+                  alt={user.displayName}
+                  className="w-12 h-12 rounded-full object-cover border border-brand-dark/10"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold">
+                  {getInitials(user?.displayName)}
+                </div>
+              )}
+              <div className="text-left hidden lg:block">
+                <p className="text-sm font-semibold text-brand-dark">{user?.displayName || 'Usuario'}</p>
+                <p className="text-xs text-brand-dark/60">Entusiasta de la Moda</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-brand-dark/40" />
+            </button>
+            {profileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 glass-effect rounded-2xl shadow-lg z-50 overflow-hidden">
+                <button
+                  onClick={() => { setProfileMenuOpen(false); onLogout(); }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-brand-dark hover:bg-brand-sand/40 transition-colors text-sm font-medium text-left"
+                >
+                  <LogOut className="w-4 h-4" /> Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* CONTENT */}
+        <div className="px-8 py-10 space-y-12">
+
+          {/* ── SECCIÓN 1: MIS OUTFITS FAVORITOS ──────────────── */}
+          <section>
+            <div className="mb-6">
+              <h2 className="text-2xl font-serif font-bold text-brand-dark">Outfits que te Gustaron</h2>
+            </div>
+
+            {/* ── FILTROS — siempre visibles ── */}
+            <div className="mb-8 space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                {/* Ocasión */}
+                <div>
+                  <label className="text-xs font-semibold text-brand-dark mb-2 block">Ocasión</label>
+                  <div className="relative">
+                    <select
+                      value={filters.ocasion}
+                      onChange={(e) => setFilters((p) => ({ ...p, ocasion: e.target.value }))}
+                      className="w-full appearance-none rounded-3xl border border-brand-sand bg-white px-3 py-2 pr-8 text-xs text-brand-dark outline-none transition-all duration-200 hover:border-brand-dark/30"
+                    >
+                      <option value="">— Todos —</option>
+                      {ocasiones.map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-brand-dark/40" />
+                  </div>
+                </div>
+
+                {/* Clima */}
+                <div>
+                  <label className="text-xs font-semibold text-brand-dark mb-2 block">Clima</label>
+                  <div className="relative">
+                    <select
+                      value={filters.clima}
+                      onChange={(e) => setFilters((p) => ({ ...p, clima: e.target.value }))}
+                      className="w-full appearance-none rounded-3xl border border-brand-sand bg-white px-3 py-2 pr-8 text-xs text-brand-dark outline-none transition-all duration-200 hover:border-brand-dark/30"
+                    >
+                      <option value="">— Todos —</option>
+                      {climas.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-brand-dark/40" />
+                  </div>
+                </div>
+
+                {/* Dress Code */}
+                <div>
+                  <label className="text-xs font-semibold text-brand-dark mb-2 block">Dress Code</label>
+                  <div className="relative">
+                    <select
+                      value={filters.dressCode}
+                      onChange={(e) => setFilters((p) => ({ ...p, dressCode: e.target.value }))}
+                      className="w-full appearance-none rounded-3xl border border-brand-sand bg-white px-3 py-2 pr-8 text-xs text-brand-dark outline-none transition-all duration-200 hover:border-brand-dark/30"
+                    >
+                      <option value="">— Todos —</option>
+                      {dressCodes.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-brand-dark/40" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-4">
+                <button
+                  onClick={handleClearFilters}
+                  className="text-xs font-medium text-brand-dark/60 hover:text-brand-dark transition-colors hover:underline"
+                >
+                  Limpiar filtros
+                </button>
+                <button
+                  onClick={handleApplyFilters}
+                  className="btn-shimmer relative inline-flex items-center rounded-full bg-brand-charcoal px-5 py-2 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                >
+                  <span className="relative z-10">Buscar</span>
+                </button>
+              </div>
+            </div>
+
+            {favoritosData.length === 0 ? (
+              /* ── ESTADO VACÍO ── */
+              <div className="rounded-3xl glass-effect p-16 text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Heart className="w-14 h-14 text-brand-dark/40" />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-brand-dark mb-2">Aún no tienes favoritos</h3>
+                <p className="text-sm text-brand-dark/60 mb-8 max-w-sm mx-auto">
+                  Agrega prendas a tu armario, genera outfits con IA y guarda los que más te gusten
+                </p>
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  <button
+                    onClick={() => onGoToWardrobe && onGoToWardrobe()}
+                    className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-charcoal px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                  >
+                    <span className="relative z-10">Agregar prendas</span>
+                  </button>
+                  <button
+                    onClick={() => onGoToOutfits && onGoToOutfits()}
+                    className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-sand px-6 py-3 text-sm font-medium text-brand-dark transition-all duration-300 hover:bg-brand-sand/70 overflow-hidden"
+                  >
+                    <span className="relative z-10">Generar Outfits</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ── CONTENIDO REAL ── */
+              <>{/* Grid / sin resultados tras filtrar / vacío por removes */}
+                {favoritos.length === 0 ? (
+                  <div className="rounded-3xl glass-effect p-16 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <Heart className="w-12 h-12 text-brand-dark/40" />
+                    </div>
+                    <h3 className="text-xl font-serif font-bold text-brand-dark mb-2">Aún no tienes favoritos</h3>
+                    <p className="text-sm text-brand-dark/60 mb-6">
+                      Dale like a los outfits que te gusten para guardarlos aquí
+                    </p>
+                    <button
+                      onClick={() => onGoToOutfits && onGoToOutfits()}
+                      className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-charcoal px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                    >
+                      <span className="relative z-10">Generar Outfits</span>
+                    </button>
+                  </div>
+                ) : favoritosFiltrados.length === 0 ? (
+                  <div className="rounded-3xl glass-effect p-12 text-center">
+                    <p className="text-sm text-brand-dark/60 mb-4">
+                      No hay favoritos que coincidan con los filtros seleccionados.
+                    </p>
+                    <button
+                      onClick={handleClearFilters}
+                      className="text-xs font-medium text-brand-dark hover:underline transition-colors"
+                    >
+                      Limpiar filtros
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {favoritosFiltrados.map((outfit, i) => {
+                      const GhostIcon = GHOST_ICONS[i % GHOST_ICONS.length];
+                      return (
+                        <div
+                          key={outfit.id}
+                          className="group relative rounded-3xl overflow-hidden shadow-[0_12px_40px_rgba(44,42,41,0.08)] hover:shadow-[0_18px_60px_rgba(44,42,41,0.12)] transition-all duration-300 hover:-translate-y-1"
+                        >
+                          {/* Ghost image area */}
+                          <div className="relative h-72 bg-brand-sand/55 flex items-center justify-center">
+                            <GhostIcon className="w-16 h-16 text-brand-dark/20" />
+                            {/* Remove favourite */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(outfit.id); }}
+                              className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                              aria-label="Quitar de favoritos"
+                            >
+                              <Heart className="w-4 h-4 fill-brand-charcoal text-brand-charcoal" />
+                            </button>
+                          </div>
+
+                          {/* Info */}
+                          <div className="p-4 bg-white/50 backdrop-blur-sm">
+                            <p className="text-sm font-semibold text-brand-dark mb-2">{outfit.name}</p>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/60">
+                                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{outfit.ocasion}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/60">
+                                <Cloud className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{outfit.clima}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/60">
+                                <Tag className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{outfit.dressCode}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+
+          {/* ── SECCIÓN 2: CARRUSEL RECOMENDADOS ─────────────── */}
+          <section>
+            <div className="mb-6">
+              <h2 className="text-2xl font-serif font-bold text-brand-dark">Recomendados para Ti</h2>
+              <p className="text-sm text-brand-dark/60 mt-1">Basado en tu estilo y preferencias</p>
+            </div>
+
+            {favoritosData.length === 0 ? (
+              /* ── ESTADO VACÍO: 3 cards fantasma estáticas ── */
+              <div>
+                <div className="flex mx-12">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="flex-shrink-0 px-3"
+                      style={{ width: `${100 / VISIBLE}%` }}
+                    >
+                      <div
+                        className="relative rounded-3xl overflow-hidden bg-brand-sand/70 flex flex-col items-center justify-center gap-3"
+                        style={{ height: '420px', opacity: 0.55, filter: 'blur(0.6px)' }}
+                      >
+                        <Sparkles className="w-12 h-12 text-brand-dark/40" />
+                        <p className="text-xs text-brand-dark/50 text-center px-8 leading-relaxed">
+                          Agrega prendas para ver recomendaciones
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={() => onGoToWardrobe && onGoToWardrobe()}
+                    className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-charcoal px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                  >
+                    <span className="relative z-10">Agregar mis primeras prendas</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ── CARRUSEL REAL ── */
+              <div
+                className="relative"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+              >
+              {/* ← flecha */}
+              <button
+                onClick={handlePrev}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 shadow-sm"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {/* Track — overflow hidden, arrows sit outside via absolute */}
+              <div className="overflow-hidden mx-12">
+                {/*
+                  Each card takes 1/VISIBLE (33.33%) of THIS container's width.
+                  With flex-shrink-0 the track overflows to numCards * cardWidth.
+                  translateX % is relative to the track element's own CSS width
+                  (= container width = 100%), so STEP_PCT = 100/VISIBLE per step.
+                */}
+                <div
+                  className="flex transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${carouselIndex * STEP_PCT}%)` }}
+                >
+                  {ghostCarouselCards.map((card, i) => {
+                    const GhostIcon = GHOST_ICONS[i % GHOST_ICONS.length];
+                    return (
+                      <div
+                        key={card.id}
+                        className="flex-shrink-0 px-3"
+                        style={{ width: `${100 / VISIBLE}%` }}
+                      >
+                        <div
+                          className="relative rounded-3xl overflow-hidden bg-brand-sand/55"
+                          style={{ height: '420px' }}
+                        >
+                          {/* Ghost icon */}
+                          <div className="flex items-center justify-center h-full">
+                            <GhostIcon className="w-20 h-20 text-brand-dark/20" />
+                          </div>
+
+                          {/* Bottom info panel */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-white/70 backdrop-blur-sm p-5">
+                            <p className="text-sm font-serif font-bold text-brand-dark/50 mb-2">{card.name}</p>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/40">
+                                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{card.ocasion}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/40">
+                                <Cloud className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{card.clima}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-brand-dark/40">
+                                <Tag className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span>{card.dressCode}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* → flecha */}
+              <button
+                onClick={handleNext}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 shadow-sm"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-6">
+                {Array.from({ length: NUM_DOTS }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCarouselIndex(i)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === carouselIndex ? 'bg-brand-charcoal w-6' : 'bg-brand-sand w-2'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+            )}
+          </section>
+
+          <div className="h-8" />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default FavoritesPage;

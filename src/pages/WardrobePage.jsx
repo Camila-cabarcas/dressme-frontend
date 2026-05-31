@@ -12,11 +12,14 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 
-const WardrobePage = ({ 
-  user, 
-  onLogout, 
-  onAddCloth, 
+const WardrobePage = ({
+  user,
+  onLogout,
+  onAddCloth,
   onGoToHome,
+  onGoToOutfits,
+  onGoToFavorites,
+  onGoToConfig,
   prendas = [],
   estilos = [],
   ocasiones = [],
@@ -26,14 +29,9 @@ const WardrobePage = ({
   categorias = []
 }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    estilo: '',
-    ocasion: '',
-    color: '',
-    clima: '',
-    tipoPrenda: '',
-    categoria: '',
-  });
+  const emptyFilters = { estilo: '', ocasion: '', color: '', clima: '', tipoPrenda: '', categoria: '' };
+  const [filters, setFilters] = useState(emptyFilters);
+  const [appliedFilters, setAppliedFilters] = useState(emptyFilters);
   const profileMenuRef = useRef(null);
 
   useEffect(() => {
@@ -67,16 +65,22 @@ const WardrobePage = ({
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleApplyFilters = () => setAppliedFilters({ ...filters });
+
   const handleClearFilters = () => {
-    setFilters({
-      estilo: '',
-      ocasion: '',
-      color: '',
-      clima: '',
-      tipoPrenda: '',
-      categoria: '',
-    });
+    setFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
   };
+
+  const prendasFiltradas = prendas.filter((p) => {
+    if (appliedFilters.estilo     && p.style    !== appliedFilters.estilo)     return false;
+    if (appliedFilters.ocasion    && p.ocasion  !== appliedFilters.ocasion)    return false;
+    if (appliedFilters.color      && p.color    !== appliedFilters.color)      return false;
+    if (appliedFilters.clima      && p.clima    !== appliedFilters.clima)      return false;
+    if (appliedFilters.tipoPrenda && p.type     !== appliedFilters.tipoPrenda) return false;
+    if (appliedFilters.categoria  && p.category !== appliedFilters.categoria)  return false;
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-brand-cream">
@@ -101,18 +105,21 @@ const WardrobePage = ({
               Mi Armario
             </button>
             <button
+              onClick={() => onGoToOutfits && onGoToOutfits()}
               className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
             >
               <Zap className="w-5 h-5" />
               Outfits
             </button>
             <button
+              onClick={() => onGoToFavorites && onGoToFavorites()}
               className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
             >
               <Heart className="w-5 h-5" />
               Favoritos
             </button>
             <button
+              onClick={() => onGoToConfig && onGoToConfig()}
               className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
             >
               <Settings className="w-5 h-5" />
@@ -186,9 +193,9 @@ const WardrobePage = ({
         <section className="px-8 py-8 space-y-8">
           {/* Filtros */}
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            <div className="flex flex-wrap items-end gap-4">
               {/* Estilo */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Estilo</label>
                 <div className="relative">
                   <select
@@ -208,7 +215,7 @@ const WardrobePage = ({
               </div>
 
               {/* Ocasión */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Ocasión</label>
                 <div className="relative">
                   <select
@@ -228,7 +235,7 @@ const WardrobePage = ({
               </div>
 
               {/* Color */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Color</label>
                 <div className="relative">
                   <select
@@ -248,7 +255,7 @@ const WardrobePage = ({
               </div>
 
               {/* Clima */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Clima</label>
                 <div className="relative">
                   <select
@@ -268,7 +275,7 @@ const WardrobePage = ({
               </div>
 
               {/* Tipo de Prenda */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Tipo de Prenda</label>
                 <div className="relative">
                   <select
@@ -288,7 +295,7 @@ const WardrobePage = ({
               </div>
 
               {/* Categoría */}
-              <div>
+              <div className="flex-1 min-w-[120px]">
                 <label className="text-xs font-semibold text-brand-dark mb-2 block">Categoría</label>
                 <div className="relative">
                   <select
@@ -306,15 +313,21 @@ const WardrobePage = ({
                   <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-brand-dark/40" />
                 </div>
               </div>
+
             </div>
 
-            {/* Botón Limpiar Filtros */}
-            <div className="flex justify-end">
+            <div className="flex items-center justify-end gap-4">
               <button
                 onClick={handleClearFilters}
                 className="text-xs font-medium text-brand-dark/60 hover:text-brand-dark transition-colors hover:underline"
               >
                 Limpiar filtros
+              </button>
+              <button
+                onClick={handleApplyFilters}
+                className="btn-shimmer relative inline-flex items-center rounded-full bg-brand-charcoal px-6 py-2 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+              >
+                <span className="relative z-10">Buscar</span>
               </button>
             </div>
           </div>
@@ -322,7 +335,7 @@ const WardrobePage = ({
           {/* Grid de prendas o estado vacío */}
           {prendas.length > 0 ? (
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-              {prendas.map((prenda) => (
+              {prendasFiltradas.map((prenda) => (
                 <div key={prenda.id} className="rounded-3xl bg-white shadow-[0_12px_40px_rgba(44,42,41,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_18px_60px_rgba(44,42,41,0.1)] overflow-hidden">
                   <div className="h-64 overflow-hidden bg-brand-sand/30">
                     <img src={prenda.image} alt={prenda.name} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
