@@ -11,7 +11,7 @@ const LandingPage = ({ onGetStarted }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-brand-bronze/20 selection:text-brand-dark">
+    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden selection:bg-brand-bronze/20 selection:text-brand-dark">
       
       {/* 1. BACKGROUND LAYOUT (Opaque, blurred, and warm overlay for optimal text contrast) */}
       <div className="absolute inset-0 z-0 bg-[#F4F0EA]">
@@ -27,7 +27,7 @@ const LandingPage = ({ onGetStarted }) => {
       {/* 2. NAVIGATION BAR */}
       <header className="relative z-10 px-6 py-6 md:px-12 max-w-7xl w-full mx-auto flex items-center justify-between">
         {/* Minimal Signature Logo */}
-        <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
+        <div className="font-serif italic text-4xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
           DressMe
         </div>
 
@@ -38,7 +38,7 @@ const LandingPage = ({ onGetStarted }) => {
           <span className="w-1 h-1 rounded-full bg-brand-bronze/55"></span>
           <button 
             onClick={onGetStarted}
-            className="flex items-center gap-1 hover:text-brand-dark transition-colors duration-200 font-semibold"
+            className="flex items-center gap-1 hover:text-brand-dark transition-colors duration-200 font-semibold cursor-pointer"
           >
             Iniciar Sesión <ArrowUpRight className="w-4 h-4" />
           </button>

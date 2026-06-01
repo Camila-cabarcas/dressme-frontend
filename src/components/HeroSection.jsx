@@ -10,14 +10,14 @@ const HeroSection = ({ onGetStarted }) => {
       <div className="hidden xl:flex w-[24%] shrink-0 flex-row gap-4 items-start">
         {/* Column 1 - Left */}
         <div className="flex flex-col gap-4 w-1/2">
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
             <img 
               src="/assets/outfit_left_1.png" 
               alt="Modelo con sudadera amarilla" 
               className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
             />
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
             <img 
               src="/assets/outfit_left_2.png" 
               alt="Modelo con camisa floreada" 
@@ -28,14 +28,14 @@ const HeroSection = ({ onGetStarted }) => {
         
         {/* Column 2 - Right (Shifted down for asymmetry) */}
         <div className="flex flex-col gap-4 w-1/2 mt-12">
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
             <img 
               src="/assets/outfit_left_3.png" 
               alt="Modelo con casaca de jean" 
               className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
             />
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
             <img 
               src="/assets/outfit_left_4.png" 
               alt="Modelo con traje de sastre blanco" 
@@ -49,7 +49,7 @@ const HeroSection = ({ onGetStarted }) => {
       <div className="flex-grow max-w-xl mx-auto flex flex-col items-center justify-center text-center py-12 px-4 z-10">
         
         {/* Dark capsule badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D20]/95 text-white border border-white/10 shadow-sm backdrop-blur-md mb-8 animate-float">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D20]/95 text-white border border-gray-300 shadow-sm backdrop-blur-md mb-8 animate-float">
           <span className="w-2 h-2 rounded-full bg-[#BFA280] animate-pulse"></span>
           <span className="text-xs font-semibold uppercase tracking-wider">Estilo Inteligente</span>
         </div>
@@ -65,7 +65,7 @@ const HeroSection = ({ onGetStarted }) => {
         </h2>
 
         {/* Description */}
-        <p className="font-sans text-base text-brand-dark/75 leading-relaxed font-light mb-10 max-w-lg">
+        <p className="font-sans text-base text-gray-700 leading-relaxed font-light mb-10 max-w-lg">
           Organiza tu armario, guarda tus prendas y deja que la IA te ayude a combinar outfits perfectos en segundos.
         </p>
 
@@ -73,8 +73,10 @@ const HeroSection = ({ onGetStarted }) => {
         <button
           onClick={onGetStarted}
           className="
+            btn-shimmer
             group
             relative
+            overflow-hidden
             inline-flex
             items-center
             justify-center
@@ -104,65 +106,40 @@ const HeroSection = ({ onGetStarted }) => {
         </button>
       </div>
 
-      {/* RIGHT COLLAGE (3 Columns of Outfits) */}
-      <div className="hidden xl:flex w-[34%] shrink-0 flex-row gap-4 items-start">
+      {/* RIGHT COLLAGE (2 Columns of Outfits) */}
+      <div className="hidden xl:flex w-[26%] shrink-0 flex-row gap-4 items-start">
         {/* Column 1 - Left (Shifted down for asymmetry) */}
-        <div className="flex flex-col gap-4 w-1/3 mt-16">
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_1.png" 
-              alt="Modelo con ropa urbana negra" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
+        <div className="flex flex-col gap-4 w-1/2 mt-16">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+            <img
+              src="/assets/outfit_right_1.png"
+              alt="Modelo con pantalón a rayas y fondo turquesa"
+              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_2.png" 
-              alt="Modelo con sastre gris casual" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
-            />
-          </div>
-        </div>
-
-        {/* Column 2 - Middle (Baseline alignment) */}
-        <div className="flex flex-col gap-4 w-1/3">
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_3.png" 
-              alt="Modelo con falda estampada" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
-            />
-          </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_4.png" 
-              alt="Modelo con gabardina beige" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+            <img
+              src="/assets/outfit_right_2.png"
+              alt="Modelo con sastre azul marino"
+              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           </div>
         </div>
 
-        {/* Column 3 - Right (Slightly shifted down) */}
-        <div className="flex flex-col gap-4 w-1/3 mt-8">
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_5.png" 
-              alt="Modelo con vestido de crochet" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
+        {/* Column 2 - Right (Baseline alignment) */}
+        <div className="flex flex-col gap-4 w-1/2">
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+            <img
+              src="/assets/outfit_right_3.png"
+              alt="Modelo con camiseta roja y cazadora"
+              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_6.png" 
-              alt="Modelo con polo a cuadros" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
-            />
-          </div>
-          <div className="overflow-hidden rounded-2xl shadow-md border border-white/20 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
-            <img 
-              src="/assets/outfit_right_7.png" 
-              alt="Modelo con pose dinámica alegre" 
-              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out" 
+          <div className="overflow-hidden rounded-2xl shadow-md border border-gray-200/50 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer group">
+            <img
+              src="/assets/outfit_right_5.png"
+              alt="Modelo con abrigo azul en plaza de Milán"
+              className="w-full h-auto object-cover aspect-[3/4.5] group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           </div>
         </div>
