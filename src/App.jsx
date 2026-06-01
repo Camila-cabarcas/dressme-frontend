@@ -37,8 +37,7 @@ function App() {
     if (!userData.isCalibrated) {
       setCurrentView('onboarding');
     } else {
-      setIsFirstTimeUpload(false);
-      setCurrentView('wardrobeUpload');
+      setCurrentView('home');
     }
   };
 
@@ -95,6 +94,8 @@ function App() {
         onGoToOutfits={() => setCurrentView('outfits')}
         onGoToFavorites={() => setCurrentView('favorites')}
         onGoToConfig={() => setCurrentView('config')}
+        prendas={prendas}
+        favoritosData={favoritosData}
       />
     );
   }
@@ -118,6 +119,7 @@ function App() {
         categorias={[]}
         prendas={prendas}
         onEliminarPrenda={(id) => setPrendas(prev => prev.filter(p => p.id !== id))}
+        onActualizarPrenda={(id, datos) => setPrendas(prev => prev.map(p => p.id === id ? { ...p, ...datos } : p))}
       />
     );
   }
@@ -136,7 +138,7 @@ function App() {
         ocasiones={[]}
         climas={[]}
         dressCodes={[]}
-        hasPrendas={false}
+        hasPrendas={prendas.length > 0}
         onOutfitLiked={(outfit, removeId) => {
           if (removeId) {
             setFavoritosData(prev => prev.filter(o => o.id !== removeId));

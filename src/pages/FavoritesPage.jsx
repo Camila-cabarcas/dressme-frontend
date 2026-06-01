@@ -68,13 +68,6 @@ const FavoritesPage = ({
   useEffect(() => { setFavoritos(favoritosData); }, [favoritosData]);
   const profileMenuRef = useRef(null);
 
-  // Auth guard
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    const userData  = localStorage.getItem('dressme_user');
-    if (!authToken || !userData) window.location.href = '/login';
-  }, []);
-
   // Close profile dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {

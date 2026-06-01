@@ -31,12 +31,6 @@ const ConfigPage = ({
   const profileMenuRef = useRef(null);
 
   useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    const userData  = localStorage.getItem('dressme_user');
-    if (!authToken || !userData) window.location.href = '/login';
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
         setProfileMenuOpen(false);

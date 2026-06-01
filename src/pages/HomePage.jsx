@@ -17,7 +17,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 
-const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage, onGoToOutfits, onGoToFavorites, onGoToConfig }) => {
+const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage, onGoToOutfits, onGoToFavorites, onGoToConfig, prendas = [], favoritosData = [] }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showHelpPanel,   setShowHelpPanel]   = useState(false);
   const [favoriteOutfits, setFavoriteOutfits] = useState(new Set());
@@ -44,13 +44,6 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Datos mockeados (vaciar para revisar estado vacío)
-  const mockGarments = [];
-
-  const mockOutfits = [];
-
-  const mockFavorites = [];
 
   const features = [
     {
@@ -222,9 +215,9 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               </button>
             </div>
 
-            {mockGarments.length > 0 ? (
+            {prendas.length > 0 ? (
               <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory">
-                {mockGarments.map((garment) => (
+                {prendas.map((garment) => (
                   <div
                     key={garment.id}
                     className="flex-shrink-0 w-40 snap-center cursor-pointer hover:opacity-90 transition-opacity"
@@ -322,9 +315,9 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               </button>
             </div>
 
-            {mockOutfits.length > 0 ? (
+            {[].length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {mockOutfits.map((outfit) => (
+                {[].map((outfit) => (
                   <div
                     key={outfit.id}
                     className="group cursor-pointer relative overflow-hidden rounded-2xl"
@@ -380,17 +373,17 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               <h2 className="text-2xl font-serif font-bold text-brand-dark">
                 Tus Favoritos
               </h2>
-              <a
-                href="#"
+              <button
+                onClick={() => onGoToFavorites && onGoToFavorites()}
                 className="text-sm font-medium text-brand-dark hover:text-brand-dark/70 transition-colors"
               >
                 Ver Todo →
-              </a>
+              </button>
             </div>
 
-            {mockFavorites.length > 0 ? (
+            {favoritosData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {mockFavorites.map((favorite) => (
+                {favoritosData.map((favorite) => (
                   <div
                     key={favorite.id}
                     className="group cursor-pointer relative overflow-hidden rounded-2xl"

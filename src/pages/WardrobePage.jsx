@@ -57,8 +57,8 @@ const TIPOS_POR_CATEGORIA = {
 };
 
 const ESTILOS_MOCK = [
-  'Atletico', 'Bohemio', 'Casual de Negocios', 'Formal Clásico', 'Costero',
-  'Cottagecore', 'dark-Academy', 'Vanguardista', 'Minimalista', 'Smart-Casual',
+  'Athleisure', 'Bohemio', 'Casual de Negocios', 'Formal Clásico', 'Costero',
+  'Cottagecore', 'Academia Oscura', 'Vanguardista', 'Minimalista', 'Smart Casual',
   'Streetwear', 'Y2K Retro',
 ];
 
@@ -72,6 +72,7 @@ const WardrobePage = ({
   onGoToConfig,
   prendas = mockPrendas,
   onEliminarPrenda = () => {},
+  onActualizarPrenda = () => {},
   estilos = [],
   ocasiones = [],
   colores = [],
@@ -90,14 +91,6 @@ const WardrobePage = ({
   const [editFields,        setEditFields]        = useState({ category: '', type: '', style: '' });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [toast,             setToast]             = useState('');
-
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('dressme_user');
-    if (!authToken || !userData) {
-      window.location.href = '/login';
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -149,6 +142,7 @@ const WardrobePage = ({
 
   const handleSave = () => {
     // TODO: conectar con API
+    onActualizarPrenda(selectedPrenda.id, editFields);
     setSelectedPrenda((prev) => ({ ...prev, ...editFields }));
     setEditMode(false);
     showToast('Cambios guardados');

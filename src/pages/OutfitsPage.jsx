@@ -87,18 +87,11 @@ const OutfitsPage = ({
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [ghostIndex,    setGhostIndex]    = useState(0);
   const [recomIndex,    setRecomIndex]    = useState(0);
-  // TODO: quitar mock de favorito inicial
-  const [likedOutfits, setLikedOutfits] = useState(new Set([1]));
+  const [likedOutfits, setLikedOutfits] = useState(new Set());
   const [dislikedOutfits, setDislikedOutfits] = useState(new Set());
   const profileMenuRef = useRef(null);
 
   const VISIBLE = 3;
-
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('dressme_user');
-    if (!authToken || !userData) window.location.href = '/login';
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -108,11 +101,6 @@ const OutfitsPage = ({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // TODO: quitar mock de favorito inicial
-  useEffect(() => {
-    onOutfitLiked(mockOutfits[0]);
   }, []);
 
   const getInitials = (name) => {
