@@ -83,9 +83,14 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
   };
 
   return (
-    <div className="min-h-screen bg-brand-cream">
+    <div className="relative min-h-screen bg-brand-cream overflow-hidden">
+      {/* Background wardrobe image – very low opacity */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.09 }}
+      />
       {/* SIDEBAR */}
-      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r border-brand-sand flex flex-col justify-between p-6 z-50">
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r-4 border-gray-300/70 flex flex-col justify-between p-6 z-50">
         {/* Logo */}
         <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
           DressMe
@@ -103,10 +108,10 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
             <button
               key={item.id}
               onClick={() => item.action && item.action()}
-              className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium ${
+              className={`btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium ${
                 item.id === 'home'
-                  ? 'bg-brand-charcoal text-white'
-                  : 'text-brand-dark hover:bg-brand-sand/40'
+                  ? 'bg-brand-charcoal text-white border-2 border-gray-400/50'
+                  : 'text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50'
               }`}
             >
               {item.icon}
@@ -148,7 +153,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
         <header className="bg-brand-cream border-b border-brand-sand px-8 py-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-serif font-bold text-brand-dark mb-2">
-              ¡Bienvenida de nuevo!
+              ¡Bienvenid@ de nuevo{user?.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}!
             </h1>
             <p className="text-brand-dark/60 font-sans text-sm">
               Descubre tu outfit perfecto hoy
@@ -165,10 +170,10 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 <img
                   src={user.profilePicture}
                   alt={user.displayName}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-brand-dark/10"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-brand-dark/10 ring-2 ring-gray-400/80 ring-offset-1"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold">
+                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold ring-2 ring-gray-400/80 ring-offset-1">
                   {getInitials(user?.displayName)}
                 </div>
               )}
@@ -222,7 +227,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                     key={garment.id}
                     className="flex-shrink-0 w-40 snap-center cursor-pointer hover:opacity-90 transition-opacity"
                   >
-                    <div className="rounded-2xl overflow-hidden h-40 mb-2 bg-brand-sand/30">
+                    <div className="rounded-2xl overflow-hidden h-40 mb-2 bg-brand-sand/30 border-4 border-gray-300/60 shadow-[0_4px_16px_rgba(192,192,192,0.25)]">
                       <img
                         src={garment.image}
                         alt={garment.name}
@@ -239,7 +244,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               <div className="flex gap-4 overflow-x-auto pb-4">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="flex-shrink-0 w-40 snap-center cursor-default">
-                    <div className="rounded-2xl h-40 mb-2 bg-brand-sand/55 flex items-center justify-center">
+                    <div className="rounded-2xl h-40 mb-2 bg-brand-sand/55 flex items-center justify-center border-4 border-gray-300/50">
                       {i % 3 === 0 ? (
                         <Shirt className="w-10 h-10 text-brand-dark/40" />
                       ) : i % 3 === 1 ? (
@@ -255,7 +260,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 <div className="flex-shrink-0 w-40 snap-center">
                   <button
                     onClick={() => onGoToWardrobe && onGoToWardrobe()}
-                    className="w-full rounded-2xl h-40 mb-2 flex items-center justify-center border-2 border-dashed border-brand-dark/30 bg-transparent cursor-pointer"
+                    className="w-full rounded-2xl h-40 mb-2 flex items-center justify-center border-4 border-dashed border-gray-400/70 bg-transparent cursor-pointer"
                     aria-label="Agregar prenda"
                   >
                     <Plus className="w-10 h-10 text-brand-dark/60" />
@@ -270,7 +275,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
 
           {/* Banner CTA: Crear Nuevo Outfit */}
           <section>
-            <div className="rounded-3xl bg-gradient-to-br from-[#F3EFE9] to-[#F8F5F1] p-8 flex items-center justify-between overflow-hidden relative">
+            <div className="rounded-3xl bg-gradient-to-br from-[#F3EFE9] to-[#F8F5F1] p-8 flex items-center justify-between overflow-hidden relative border-4 border-gray-300/50 shadow-[0_4px_20px_rgba(192,192,192,0.2)]">
               {/* Rectángulos decorativos */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-sand/20 rounded-full blur-3xl -z-0"></div>
               <div className="absolute bottom-6 right-12 w-24 h-24 bg-brand-sand/15 rounded-full blur-2xl -z-0"></div>
@@ -320,7 +325,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 {[].map((outfit) => (
                   <div
                     key={outfit.id}
-                    className="group cursor-pointer relative overflow-hidden rounded-2xl"
+                    className="group cursor-pointer relative overflow-hidden rounded-2xl border-4 border-gray-300/60 shadow-[0_4px_16px_rgba(192,192,192,0.25)]"
                   >
                     <div className="relative h-64 bg-brand-sand/30">
                       <img
@@ -354,7 +359,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 ))}
               </div>
             ) : (
-              <div className="rounded-3xl glass-effect p-12 text-center">
+              <div className="rounded-3xl glass-effect p-12 text-center" style={{ border: '4px solid rgba(209,213,219,0.6)', boxShadow: '0 4px 16px rgba(192,192,192,0.25)' }}>
                 <div className="flex items-center justify-center mb-4">
                   <Wand2 className="w-12 h-12 text-brand-dark/40" />
                 </div>
@@ -386,7 +391,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 {favoritosData.map((favorite) => (
                   <div
                     key={favorite.id}
-                    className="group cursor-pointer relative overflow-hidden rounded-2xl"
+                    className="group cursor-pointer relative overflow-hidden rounded-2xl border-4 border-gray-300/60 shadow-[0_4px_16px_rgba(192,192,192,0.25)]"
                   >
                     <div className="relative h-80 bg-brand-sand/30">
                       <img
@@ -408,7 +413,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
                 ))}
               </div>
             ) : (
-              <div className="rounded-3xl glass-effect p-12 text-center">
+              <div className="rounded-3xl glass-effect p-12 text-center" style={{ border: '4px solid rgba(209,213,219,0.6)', boxShadow: '0 4px 16px rgba(192,192,192,0.25)' }}>
                 <div className="flex items-center justify-center mb-4">
                   <Heart className="w-12 h-12 text-brand-dark/40" />
                 </div>
@@ -434,7 +439,7 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               {features.map((feature, idx) => (
                 <div
                   key={idx}
-                  className="rounded-3xl bg-gradient-to-br from-[#F3EFE9] to-[#F8F5F1] p-8 text-center hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                  className="rounded-3xl bg-gradient-to-br from-[#F3EFE9] to-[#F8F5F1] p-8 text-center hover:shadow-md transition-shadow duration-300 cursor-pointer border-4 border-gray-300/50"
                 >
                   <div className="flex justify-center mb-4">{feature.icon}</div>
                   <h3 className="text-lg font-serif font-bold text-brand-dark mb-2">
