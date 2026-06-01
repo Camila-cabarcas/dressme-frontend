@@ -311,7 +311,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
               onClick={() => onUploadComplete && onUploadComplete()}
               className="px-8 py-4 rounded-full font-semibold text-base md:text-lg transition-all duration-300 border-2 border-brand-dark text-brand-dark hover:bg-brand-dark/5"
             >
-              Continuar
+              {isFirstTime ? 'Continuar' : 'Salir'}
             </button>
           </div>
         </div>
