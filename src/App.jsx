@@ -16,6 +16,10 @@ function App() {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  const [isFirstTimeUpload, setIsFirstTimeUpload] = useState(false);
+  const [prendas, setPrendas] = useState([]);
+  const [favoritosData, setFavoritosData] = useState([]);
+
   const [currentView, setCurrentView] = useState(() => {
     const savedUser = localStorage.getItem('dressme_user');
     if (savedUser) {
@@ -33,6 +37,7 @@ function App() {
     if (!userData.isCalibrated) {
       setCurrentView('onboarding');
     } else {
+      setIsFirstTimeUpload(false);
       setCurrentView('wardrobeUpload');
     }
   };
@@ -60,6 +65,7 @@ function App() {
         onCalibrationCompleted={(updatedUser) => {
           setUser(updatedUser);
           localStorage.setItem('dressme_user', JSON.stringify(updatedUser));
+          setIsFirstTimeUpload(true);
           setCurrentView('wardrobeUpload');
         }}
       />
@@ -72,6 +78,8 @@ function App() {
         user={user}
         onLogout={handleLogout}
         onUploadComplete={() => setCurrentView('home')}
+        isFirstTime={isFirstTimeUpload}
+        onPrendaGuardada={(prenda) => setPrendas(prev => [...prev, prenda])}
       />
     );
   }
@@ -82,7 +90,7 @@ function App() {
         user={user}
         onLogout={handleLogout}
         onGoToOnboarding={() => setCurrentView('onboarding')}
-        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToWardrobe={() => { setIsFirstTimeUpload(false); setCurrentView('wardrobeUpload'); }}
         onGoToWardrobePage={() => setCurrentView('wardrobePage')}
         onGoToOutfits={() => setCurrentView('outfits')}
         onGoToFavorites={() => setCurrentView('favorites')}
@@ -96,7 +104,7 @@ function App() {
       <WardrobePage
         user={user}
         onLogout={handleLogout}
-        onAddCloth={() => setCurrentView('wardrobeUpload')}
+        onAddCloth={() => { setIsFirstTimeUpload(false); setCurrentView('wardrobeUpload'); }}
         onGoToHome={() => setCurrentView('home')}
         onGoToWardrobePage={() => setCurrentView('wardrobePage')}
         onGoToOutfits={() => setCurrentView('outfits')}
@@ -108,6 +116,7 @@ function App() {
         climas={[]}
         tiposPrenda={[]}
         categorias={[]}
+        prendas={prendas}
       />
     );
   }
@@ -118,7 +127,7 @@ function App() {
         user={user}
         onLogout={handleLogout}
         onGoToHome={() => setCurrentView('home')}
-        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToWardrobe={() => { setIsFirstTimeUpload(false); setCurrentView('wardrobeUpload'); }}
         onGoToWardrobePage={() => setCurrentView('wardrobePage')}
         onGoToOutfits={() => setCurrentView('outfits')}
         onGoToFavorites={() => setCurrentView('favorites')}
@@ -127,6 +136,13 @@ function App() {
         climas={[]}
         dressCodes={[]}
         hasPrendas={false}
+        onOutfitLiked={(outfit, removeId) => {
+          if (removeId) {
+            setFavoritosData(prev => prev.filter(o => o.id !== removeId));
+          } else {
+            setFavoritosData(prev => [...prev, outfit]);
+          }
+        }}
       />
     );
   }
@@ -140,12 +156,12 @@ function App() {
         onGoToWardrobePage={() => setCurrentView('wardrobePage')}
         onGoToOutfits={() => setCurrentView('outfits')}
         onGoToFavorites={() => setCurrentView('favorites')}
-        onGoToWardrobe={() => setCurrentView('wardrobeUpload')}
+        onGoToWardrobe={() => { setIsFirstTimeUpload(false); setCurrentView('wardrobeUpload'); }}
         onGoToConfig={() => setCurrentView('config')}
         ocasiones={[]}
         climas={[]}
         dressCodes={[]}
-        favoritosData={[]}
+        favoritosData={favoritosData}
       />
     );
   }

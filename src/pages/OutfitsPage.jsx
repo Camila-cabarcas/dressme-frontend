@@ -75,13 +75,15 @@ const OutfitsPage = ({
   climas = [],
   dressCodes = [],
   hasPrendas = false,
+  onOutfitLiked = () => {},
 }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [filters, setFilters] = useState({ ocasion: '', clima: '', dressCode: '' });
   const [generated, setGenerated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [likedOutfits, setLikedOutfits] = useState(new Set());
+  // TODO: quitar mock de favorito inicial
+  const [likedOutfits, setLikedOutfits] = useState(new Set([1]));
   const [dislikedOutfits, setDislikedOutfits] = useState(new Set());
   const profileMenuRef = useRef(null);
 
@@ -101,6 +103,11 @@ const OutfitsPage = ({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // TODO: quitar mock de favorito inicial
+  useEffect(() => {
+    onOutfitLiked(mockOutfits[0]);
   }, []);
 
   const getInitials = (name) => {
@@ -131,9 +138,12 @@ const OutfitsPage = ({
     const newDisliked = new Set(dislikedOutfits);
     if (newLiked.has(id)) {
       newLiked.delete(id);
+      onOutfitLiked(null, id);
     } else {
       newLiked.add(id);
       newDisliked.delete(id);
+      const outfit = mockOutfits.find((o) => o.id === id);
+      if (outfit) onOutfitLiked(outfit);
     }
     setLikedOutfits(newLiked);
     setDislikedOutfits(newDisliked);
@@ -146,6 +156,7 @@ const OutfitsPage = ({
       newDisliked.delete(id);
     } else {
       newDisliked.add(id);
+      if (newLiked.has(id)) onOutfitLiked(null, id);
       newLiked.delete(id);
     }
     setDislikedOutfits(newDisliked);
@@ -378,7 +389,7 @@ const OutfitsPage = ({
                       <button
                         onClick={handlePrev}
                         disabled={carouselIndex === 0}
-                        className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
@@ -433,7 +444,7 @@ const OutfitsPage = ({
                       <button
                         onClick={handleNext}
                         disabled={carouselIndex >= mockOutfits.length - VISIBLE}
-                        className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
