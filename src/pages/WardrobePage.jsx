@@ -17,6 +17,7 @@ import {
   Pencil,
   Trash2,
   X,
+  Lightbulb,
 } from 'lucide-react';
 
 // TODO: quitar mock
@@ -70,6 +71,7 @@ const WardrobePage = ({
   onGoToFavorites,
   onGoToConfig,
   prendas = mockPrendas,
+  onEliminarPrenda = () => {},
   estilos = [],
   ocasiones = [],
   colores = [],
@@ -78,6 +80,7 @@ const WardrobePage = ({
   categorias = []
 }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showHelpPanel,   setShowHelpPanel]   = useState(false);
   const emptyFilters = { estilo: '', ocasion: '', color: '', clima: '', tipoPrenda: '', categoria: '' };
   const [filters, setFilters] = useState(emptyFilters);
   const [appliedFilters, setAppliedFilters] = useState(emptyFilters);
@@ -153,6 +156,7 @@ const WardrobePage = ({
 
   const handleDelete = () => {
     // TODO: conectar con API DELETE
+    onEliminarPrenda(selectedPrenda.id);
     closeModal();
     showToast('Prenda eliminada');
   };
@@ -213,10 +217,30 @@ const WardrobePage = ({
           </nav>
         </div>
 
-        <button className="flex items-center gap-3 px-4 py-3 rounded-2xl text-brand-dark/60 hover:text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 text-sm font-medium">
-          <HelpCircle className="w-5 h-5" />
-          Ayuda
-        </button>
+        <div className="relative">
+          {showHelpPanel && (
+            <div className="absolute bottom-full left-0 mb-3 w-72 bg-white rounded-3xl shadow-[0_8px_32px_rgba(44,42,41,0.15)] p-5 z-50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-brand-bronze" />
+                  <h3 className="font-serif font-bold text-brand-dark text-sm">Tips de uso</h3>
+                </div>
+                <button onClick={() => setShowHelpPanel(false)} className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-brand-sand/60 transition-colors">
+                  <X className="w-3.5 h-3.5 text-brand-dark/60" />
+                </button>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {['📸 Sube fotos con buena iluminación para que la IA identifique mejor tus prendas','👗 Entre más prendas subas, mejores outfits podrá recomendarte la IA','✨ Calibra tu estilo en Configuración para recomendaciones más precisas','🎯 Usa los filtros de Ocasión y Clima para encontrar el outfit perfecto','❤️ Guarda tus outfits favoritos dándoles like para encontrarlos fácilmente'].map((tip, i) => (
+                  <li key={i} className="text-xs text-brand-dark/60 leading-relaxed">{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <button onClick={() => setShowHelpPanel((v) => !v)} className="flex items-center gap-3 px-4 py-3 rounded-2xl text-brand-dark/60 hover:text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 text-sm font-medium w-full">
+            <HelpCircle className="w-5 h-5" />
+            Ayuda
+          </button>
+        </div>
       </aside>
 
       <main className="ml-64">

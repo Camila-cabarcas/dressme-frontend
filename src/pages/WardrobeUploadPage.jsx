@@ -164,9 +164,11 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
           <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none">
             DressMe
           </div>
-          <div className="text-center text-sm md:text-base text-brand-dark/70 font-sans font-medium">
-            <span className="text-brand-bronze">Paso 3 de 3:</span> Tu Armario Virtual
-          </div>
+          {isFirstTime && (
+            <div className="text-center text-sm md:text-base text-brand-dark/70 font-sans font-medium">
+              <span className="text-brand-bronze">Paso 3 de 3:</span> Tu Armario Virtual
+            </div>
+          )}
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}

@@ -15,6 +15,8 @@ import {
   ThumbsDown,
   AlertCircle,
   Loader2,
+  X,
+  Lightbulb,
 } from 'lucide-react';
 
 const mockOutfits = [
@@ -78,10 +80,13 @@ const OutfitsPage = ({
   onOutfitLiked = () => {},
 }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showHelpPanel,   setShowHelpPanel]   = useState(false);
   const [filters, setFilters] = useState({ ocasion: '', clima: '', dressCode: '' });
   const [generated, setGenerated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [ghostIndex,    setGhostIndex]    = useState(0);
+  const [recomIndex,    setRecomIndex]    = useState(0);
   // TODO: quitar mock de favorito inicial
   const [likedOutfits, setLikedOutfits] = useState(new Set([1]));
   const [dislikedOutfits, setDislikedOutfits] = useState(new Set());
@@ -208,10 +213,30 @@ const OutfitsPage = ({
             </button>
           </nav>
         </div>
-        <button className="flex items-center gap-3 px-4 py-3 rounded-2xl text-brand-dark/60 hover:text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 text-sm font-medium">
-          <HelpCircle className="w-5 h-5" />
-          Ayuda
-        </button>
+        <div className="relative">
+          {showHelpPanel && (
+            <div className="absolute bottom-full left-0 mb-3 w-72 bg-white rounded-3xl shadow-[0_8px_32px_rgba(44,42,41,0.15)] p-5 z-50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-brand-bronze" />
+                  <h3 className="font-serif font-bold text-brand-dark text-sm">Tips de uso</h3>
+                </div>
+                <button onClick={() => setShowHelpPanel(false)} className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-brand-sand/60 transition-colors">
+                  <X className="w-3.5 h-3.5 text-brand-dark/60" />
+                </button>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {['📸 Sube fotos con buena iluminación para que la IA identifique mejor tus prendas','👗 Entre más prendas subas, mejores outfits podrá recomendarte la IA','✨ Calibra tu estilo en Configuración para recomendaciones más precisas','🎯 Usa los filtros de Ocasión y Clima para encontrar el outfit perfecto','❤️ Guarda tus outfits favoritos dándoles like para encontrarlos fácilmente'].map((tip, i) => (
+                  <li key={i} className="text-xs text-brand-dark/60 leading-relaxed">{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <button onClick={() => setShowHelpPanel((v) => !v)} className="flex items-center gap-3 px-4 py-3 rounded-2xl text-brand-dark/60 hover:text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 text-sm font-medium w-full">
+            <HelpCircle className="w-5 h-5" />
+            Ayuda
+          </button>
+        </div>
       </aside>
 
       {/* MAIN */}
@@ -338,19 +363,35 @@ const OutfitsPage = ({
                 <p className="text-xs text-brand-dark/40 text-center mb-4">
                   Selecciona los filtros y presiona Generar
                 </p>
-                <div className="grid grid-cols-3 gap-6">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-3xl overflow-hidden opacity-30 blur-[1px] bg-brand-sand/60"
-                      style={{ height: '380px' }}
-                    >
-                      <div className="h-full flex flex-col items-center justify-center gap-3">
-                        <Sparkles className="w-12 h-12 text-brand-dark/50" />
-                        <p className="text-sm text-brand-dark/50 font-medium">Genera tu primer outfit</p>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setGhostIndex((p) => Math.max(0, p - 1))}
+                    disabled={ghostIndex === 0}
+                    className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <div className="grid grid-cols-3 gap-6 flex-1">
+                    {Array.from({ length: 6 }).slice(ghostIndex, ghostIndex + VISIBLE).map((_, i) => (
+                      <div
+                        key={ghostIndex + i}
+                        className="rounded-3xl overflow-hidden opacity-30 blur-[1px] bg-brand-sand/60"
+                        style={{ height: '380px' }}
+                      >
+                        <div className="h-full flex flex-col items-center justify-center gap-3">
+                          <Sparkles className="w-12 h-12 text-brand-dark/50" />
+                          <p className="text-sm text-brand-dark/50 font-medium">Genera tu primer outfit</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setGhostIndex((p) => Math.min(6 - VISIBLE, p + 1))}
+                    disabled={ghostIndex >= 6 - VISIBLE}
+                    className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}
@@ -465,6 +506,54 @@ const OutfitsPage = ({
                   </div>
                 )}
               </>
+            )}
+          </section>
+
+          {/* RECOMENDADOS PARA TI */}
+          <section className="mt-8">
+            <div className="mb-6">
+              <h2 className="text-2xl font-serif font-bold text-brand-dark">Recomendados para Ti</h2>
+              <p className="text-sm text-brand-dark/60 mt-1">Basado en tu estilo y preferencias</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setRecomIndex((p) => Math.max(0, p - 1))}
+                disabled={recomIndex === 0}
+                className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="grid grid-cols-3 gap-6 flex-1">
+                {[Sparkles, Shirt, Heart, Zap, ThumbsUp, ThumbsDown].slice(recomIndex, recomIndex + VISIBLE).map((Icon, i) => (
+                  <div
+                    key={recomIndex + i}
+                    className="rounded-3xl overflow-hidden bg-brand-sand/60 flex flex-col items-center justify-center gap-3"
+                    style={{ height: '380px', opacity: 0.45, filter: 'blur(0.6px)' }}
+                  >
+                    <Icon className="w-12 h-12 text-brand-dark/40" />
+                    <p className="text-sm text-brand-dark/50 font-medium text-center px-8">
+                      Genera outfits para ver recomendaciones
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setRecomIndex((p) => Math.min(6 - VISIBLE, p + 1))}
+                disabled={recomIndex >= 6 - VISIBLE}
+                className="flex-shrink-0 w-10 h-10 rounded-full border border-brand-sand bg-white flex items-center justify-center text-brand-dark hover:bg-brand-sand/40 transition-all duration-200 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+            {!hasPrendas && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => onGoToWardrobe && onGoToWardrobe()}
+                  className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-charcoal px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
+                >
+                  <span className="relative z-10">Agregar mis primeras prendas</span>
+                </button>
+              </div>
             )}
           </section>
 

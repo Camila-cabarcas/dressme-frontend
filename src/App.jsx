@@ -117,6 +117,7 @@ function App() {
         tiposPrenda={[]}
         categorias={[]}
         prendas={prendas}
+        onEliminarPrenda={(id) => setPrendas(prev => prev.filter(p => p.id !== id))}
       />
     );
   }
@@ -162,6 +163,7 @@ function App() {
         climas={[]}
         dressCodes={[]}
         favoritosData={favoritosData}
+        onRemoveFavorite={(id) => setFavoritosData(prev => prev.filter(o => o.id !== id))}
       />
     );
   }
