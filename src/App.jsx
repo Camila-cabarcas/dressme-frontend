@@ -30,7 +30,6 @@ function App() {
   });
 
   const handleLoginSuccess = (userData) => {
-    console.log('Login recibido:', userData);
     localStorage.setItem('authToken', userData.token);
     localStorage.setItem('dressme_user', JSON.stringify(userData));
     setUser(userData);

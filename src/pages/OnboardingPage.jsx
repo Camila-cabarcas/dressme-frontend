@@ -106,7 +106,6 @@ const OnboardingPage = ({ user, onCalibrationCompleted }) => {
         onCalibrationCompleted(updatedUser);
       }
 
-      console.log('Calibración completada');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error en la calibración');
       console.error('OnboardingPage - handleFinalize:', err);

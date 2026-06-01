@@ -17,7 +17,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 
-const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage, onGoToOutfits, onGoToFavorites, onGoToConfig, prendas = [], favoritosData = [] }) => {
+const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWardrobePage, onGoToOutfits, onGoToFavorites, onGoToConfig, prendas = [], favoritosData = [], outfits = [] }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showHelpPanel,   setShowHelpPanel]   = useState(false);
   const [favoriteOutfits, setFavoriteOutfits] = useState(new Set());
@@ -320,9 +320,9 @@ const HomePage = ({ user, onLogout, onGoToOnboarding, onGoToWardrobe, onGoToWard
               </button>
             </div>
 
-            {[].length > 0 ? (
+            {outfits.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[].map((outfit) => (
+                {outfits.map((outfit) => (
                   <div
                     key={outfit.id}
                     className="group cursor-pointer relative overflow-hidden rounded-2xl border-4 border-gray-300/60 shadow-[0_4px_16px_rgba(192,192,192,0.25)]"

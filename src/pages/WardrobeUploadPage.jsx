@@ -33,6 +33,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
   const [editMode,          setEditMode]          = useState(false);
   const [editedData,        setEditedData]        = useState({});
   const [showConfirmModal,  setShowConfirmModal]  = useState(false);
+  const [previewUrl,        setPreviewUrl]        = useState(null);
   const fileInputRef   = useRef(null);
   const profileMenuRef = useRef(null);
 
@@ -41,6 +42,13 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
     const userData  = localStorage.getItem('dressme_user');
     if (!authToken || !userData) window.location.href = '/login';
   }, []);
+
+  useEffect(() => {
+    if (!selectedFile) { setPreviewUrl(null); return; }
+    const url = URL.createObjectURL(selectedFile);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [selectedFile]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -136,7 +144,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
     onPrendaGuardada({
       id: Date.now(),
       name: aiResult.type || 'Nueva prenda',
-      image: selectedFile ? URL.createObjectURL(selectedFile) : '',
+      image: previewUrl || '',
       style: aiResult.style,
       type: aiResult.type,
       category: aiResult.category,
@@ -286,18 +294,6 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
             )}
           </GlassContainer>
 
-          {/* TODO: quitar en producción */}
-          {import.meta.env.DEV && (
-            <div className="flex justify-center mb-4">
-              <button
-                onClick={() => setAiResult({ category: 'Tops', type: 'Blouse', color: 'Camel', style: 'Quiet Luxury' })}
-                className="text-xs text-brand-dark/40 hover:text-brand-dark/60 transition-colors"
-              >
-                🧪 Simular respuesta IA
-              </button>
-            </div>
-          )}
-
           {/* ACTION BUTTONS */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up-delay-more">
             <button
@@ -337,9 +333,9 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
 
             {/* Imagen izquierda */}
             <div className="w-1/2 flex-shrink-0 min-h-[400px]">
-              {selectedFile && (
+              {previewUrl && (
                 <img
-                  src={URL.createObjectURL(selectedFile)}
+                  src={previewUrl}
                   alt="Prenda subida"
                   className="w-full h-full object-cover"
                 />

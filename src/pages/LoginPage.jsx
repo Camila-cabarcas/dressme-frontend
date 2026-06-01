@@ -50,11 +50,7 @@ const LoginPage = ({ onBack, onLoginSuccess }) => {
           try {
             data = JSON.parse(text);
           } catch (parseError) {
-            console.error(
-              'Error parsing JSON response:',
-              text,
-              parseError
-            );
+            // JSON parse failed — data stays empty, error surfaces via !loginResponse.ok
           }
         }
       }
@@ -76,8 +72,6 @@ const LoginPage = ({ onBack, onLoginSuccess }) => {
       if (data?.id) {
         localStorage.setItem('userId', data.id);
       }
-
-      console.log('Login exitoso:', data);
 
       setSubmitState('success');
 
