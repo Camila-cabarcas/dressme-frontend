@@ -111,6 +111,16 @@ html, body {
   left: 160%;
 }
 
+/* Login page mirror frame — gradient border wrapper technique */
+.login-mirror-frame {
+  background: linear-gradient(135deg, #A0A0A0, #EBEBEB, #787878, #DEDEDE, #B0B0B0);
+  transition: background 0.5s ease-out, box-shadow 0.5s ease-out;
+}
+.login-mirror-frame:hover {
+  background: linear-gradient(135deg, #C8C8C8, #F8F8F8, #A8A8A8, #F4F4F4, #D0D0D0);
+  box-shadow: 0 12px 48px rgba(192, 192, 192, 0.55);
+}
+
 /* Subtle content-area texture/pattern to add warmth (very low opacity) */
 .content-bg {
   position: relative;

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
-import GlassContainer from '../components/GlassContainer';
 
 const apiBaseUrl =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
@@ -159,6 +158,11 @@ const LoginPage = ({ onBack, onLoginSuccess }) => {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center items-center px-6 py-10 bg-[#F4F0EA] selection:bg-brand-bronze/20 selection:text-brand-dark">
+      {/* Closet background image at very low opacity */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{ backgroundImage: "url('/assets/wardrobe_bg.png')", opacity: 0.07 }}
+      />
       <button
         onClick={onBack}
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm font-medium text-brand-dark/75 hover:text-brand-dark transition-colors"
@@ -168,13 +172,27 @@ const LoginPage = ({ onBack, onLoginSuccess }) => {
       </button>
 
       <div className="w-full max-w-3xl">
-        <GlassContainer className="p-8 md:p-12 border-white/50 shadow-2xl">
+        <div
+          className="login-mirror-frame rounded-3xl p-[5px] shadow-[0_8px_32px_rgba(192,192,192,0.3)]"
+        >
+          <div
+            className="rounded-[22px] p-8 md:p-12 backdrop-blur-md transition-all duration-500 ease-out"
+            style={{ background: 'rgba(253,251,247,0.95)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+          >
           <div className="flex flex-col gap-4 text-center">
-            <div className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A1D20]/95 px-4 py-2 text-xs uppercase tracking-[0.26em] text-white shadow-sm shadow-brand-charcoal/20">
+            <div
+              className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs uppercase tracking-[0.26em] text-white shadow-sm border border-gray-400/40"
+              style={{
+                background: 'linear-gradient(135deg, rgba(32,34,38,0.97), rgba(55,57,62,0.95), rgba(32,34,38,0.97))',
+              }}
+            >
               Acceso seguro
             </div>
 
-            <h1 className="font-serif italic text-4xl text-brand-dark leading-tight">
+            <h1
+              className="font-serif italic text-4xl text-brand-dark leading-tight"
+              style={{ textShadow: '0 1px 4px rgba(192,192,192,0.45), 0 0 14px rgba(200,200,210,0.18)' }}
+            >
               Inicia sesión con Google
             </h1>
 
@@ -228,7 +246,8 @@ const LoginPage = ({ onBack, onLoginSuccess }) => {
               )}
             </div>
           </div>
-        </GlassContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
