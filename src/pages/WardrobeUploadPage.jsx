@@ -156,7 +156,12 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
   const handleLogout = () => onLogout();
 
   return (
-    <div className="min-h-screen bg-[#F4F0EA] flex flex-col">
+    <div className="relative min-h-screen bg-[#F4F0EA] flex flex-col overflow-hidden">
+      {/* Background wardrobe image – very low opacity */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.09 }}
+      />
 
       {/* HEADER */}
       <header className="relative z-10 px-6 py-6 md:px-12">
@@ -178,7 +183,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
                 <img
                   src={user.profilePicture}
                   alt={user.displayName}
-                  className="w-10 h-10 rounded-full object-cover border border-brand-dark/10"
+                  className="w-10 h-10 rounded-full object-cover border border-brand-dark/10 ring-2 ring-gray-400/80 ring-offset-1"
                 />
               )}
               <div className="hidden md:flex flex-col items-end">
@@ -302,6 +307,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
                 px-8 py-4 rounded-full font-semibold text-base md:text-lg transition-all duration-300
                 flex items-center justify-center gap-2 min-w-[200px]
                 ${selectedFile && !isUploading ? 'bg-brand-dark text-white hover:opacity-90' : 'bg-brand-dark/50 text-white/70 cursor-not-allowed'}
+                btn-shimmer relative overflow-hidden
               `}
             >
               {isUploading && <Loader2 className="w-5 h-5 animate-spin" />}
@@ -320,7 +326,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
       {/* ── MODAL DE RESULTADO IA ──────────────────────────── */}
       {aiResult && !showConfirmModal && (
         <div className="fixed inset-0 bg-brand-dark/60 z-[100] flex items-center justify-center p-8">
-          <div className="relative bg-white rounded-3xl overflow-hidden flex w-full max-w-4xl max-h-[90vh] shadow-[0_32px_80px_rgba(44,42,41,0.25)]">
+          <div className="relative bg-white rounded-3xl overflow-hidden flex w-full max-w-4xl max-h-[90vh] shadow-[0_32px_80px_rgba(44,42,41,0.25)] border-4 border-gray-300/50">
             {/* Botón cerrar */}
             <button
               onClick={() => { setAiResult(null); setEditMode(false); }}
@@ -477,7 +483,7 @@ const WardrobeUploadPage = ({ user, onLogout, onUploadComplete, isFirstTime = fa
       {/* ── MODAL DE CONFIRMACIÓN ─────────────────────────── */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-brand-dark/60 z-[100] flex items-center justify-center p-8">
-          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-[0_32px_80px_rgba(44,42,41,0.25)] flex flex-col gap-5 text-center">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-[0_32px_80px_rgba(44,42,41,0.25)] flex flex-col gap-5 text-center border-4 border-gray-300/50">
             <h3 className="text-2xl font-serif font-bold text-brand-dark">¡Prenda guardada!</h3>
             <p className="text-sm text-brand-dark/60">¿Qué deseas hacer ahora?</p>
             <div className="flex flex-col gap-3">

@@ -166,8 +166,13 @@ const WardrobePage = ({
   });
 
   return (
-    <div className="min-h-screen bg-brand-cream">
-      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r border-brand-sand flex flex-col justify-between p-6 z-50">
+    <div className="relative min-h-screen bg-brand-cream overflow-hidden">
+      {/* Background wardrobe image – very low opacity */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.09 }}
+      />
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r-4 border-gray-300/70 flex flex-col justify-between p-6 z-50">
         <div>
           <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
             DressMe
@@ -176,34 +181,34 @@ const WardrobePage = ({
           <nav className="flex flex-col gap-3 mt-12">
             <button
               onClick={() => onGoToHome && onGoToHome()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Home className="w-5 h-5" />
               Inicio
             </button>
             <button
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-charcoal text-white text-sm font-medium"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-charcoal text-white text-sm font-medium border-2 border-gray-400/50"
             >
               <Shirt className="w-5 h-5" />
               Mi Armario
             </button>
             <button
               onClick={() => onGoToOutfits && onGoToOutfits()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Zap className="w-5 h-5" />
               Outfits
             </button>
             <button
               onClick={() => onGoToFavorites && onGoToFavorites()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Heart className="w-5 h-5" />
               Favoritos
             </button>
             <button
               onClick={() => onGoToConfig && onGoToConfig()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Settings className="w-5 h-5" />
               Configuración
@@ -262,10 +267,10 @@ const WardrobePage = ({
                 <img
                   src={user.profilePicture}
                   alt={user.displayName}
-                  className="w-12 h-12 rounded-full object-cover border border-brand-dark/10"
+                  className="w-12 h-12 rounded-full object-cover border border-brand-dark/10 ring-2 ring-gray-400/80 ring-offset-1"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold">
+                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold ring-2 ring-gray-400/80 ring-offset-1">
                   {getInitials(user?.displayName)}
                 </div>
               )}
@@ -457,7 +462,7 @@ const WardrobePage = ({
               ))}
             </div>
           ) : (
-            <div className="rounded-3xl glass-effect p-16 text-center">
+            <div className="rounded-3xl glass-effect p-16 text-center" style={{ border: '4px solid rgba(209,213,219,0.6)', boxShadow: '0 4px 16px rgba(192,192,192,0.25)' }}>
               <div className="flex items-center justify-center mb-4">
                 <ShoppingBag className="w-16 h-16 text-brand-dark/40" />
               </div>
@@ -482,7 +487,7 @@ const WardrobePage = ({
           onClick={closeModal}
         >
           <div
-            className="relative bg-white rounded-3xl overflow-hidden flex w-full max-w-3xl shadow-[0_32px_80px_rgba(44,42,41,0.25)]"
+            className="relative bg-white rounded-3xl overflow-hidden flex w-full max-w-3xl shadow-[0_32px_80px_rgba(44,42,41,0.25)] border-4 border-gray-300/50"
             style={{ maxHeight: '80vh' }}
             onClick={(e) => e.stopPropagation()}
           >

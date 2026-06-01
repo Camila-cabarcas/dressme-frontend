@@ -119,7 +119,12 @@ const OnboardingPage = ({ user, onCalibrationCompleted }) => {
   const progressText = `Paso 1 de 3: Define tu estilo (${selections.size} selecciones)`;
 
   return (
-    <div className="min-h-screen bg-[#F4F0EA] selection:bg-brand-bronze/20 selection:text-brand-dark">
+    <div className="relative min-h-screen bg-[#F4F0EA] selection:bg-brand-bronze/20 selection:text-brand-dark overflow-hidden">
+      {/* Background wardrobe image – very low opacity */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.09 }}
+      />
       <header className="sticky top-0 z-40 border-b border-brand-dark/5 bg-[#F4F0EA]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="font-serif italic text-2xl font-bold text-brand-dark">
@@ -135,7 +140,7 @@ const OnboardingPage = ({ user, onCalibrationCompleted }) => {
               <img
                 src={user.profilePicture}
                 alt={user.displayName}
-                className="w-8 h-8 rounded-full border border-brand-dark/10"
+                className="w-8 h-8 rounded-full border border-brand-dark/10 ring-2 ring-gray-400/80 ring-offset-1"
               />
             )}
             <span className="text-sm font-medium text-brand-dark">
@@ -198,7 +203,7 @@ const OnboardingPage = ({ user, onCalibrationCompleted }) => {
           <button
             onClick={handleFinalize}
             disabled={!minSelectionsReached || isSubmitting}
-            className={`w-full py-3 px-6 rounded-full font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+            className={`btn-shimmer relative overflow-hidden w-full py-3 px-6 rounded-full font-semibold text-white transition-all flex items-center justify-center gap-2 ${
               minSelectionsReached
                 ? 'bg-brand-dark hover:bg-brand-dark/90 cursor-pointer'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'

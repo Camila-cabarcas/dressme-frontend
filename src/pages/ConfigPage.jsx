@@ -46,10 +46,15 @@ const ConfigPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-brand-cream">
+    <div className="relative min-h-screen bg-brand-cream overflow-hidden">
+      {/* Background wardrobe image – very low opacity */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.09 }}
+      />
 
       {/* ── SIDEBAR ─────────────────────────────────────────── */}
-      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r border-brand-sand flex flex-col justify-between p-6 z-50">
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-brand-cream border-r-4 border-gray-300/70 flex flex-col justify-between p-6 z-50">
         <div>
           <div className="font-serif italic text-2xl font-normal text-brand-dark tracking-wide select-none cursor-pointer">
             DressMe
@@ -57,29 +62,29 @@ const ConfigPage = ({
           <nav className="flex flex-col gap-3 mt-12">
             <button
               onClick={() => onGoToHome && onGoToHome()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Home className="w-5 h-5" /> Inicio
             </button>
             <button
               onClick={() => onGoToWardrobePage && onGoToWardrobePage()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Shirt className="w-5 h-5" /> Mi Armario
             </button>
             <button
               onClick={() => onGoToOutfits && onGoToOutfits()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Zap className="w-5 h-5" /> Outfits
             </button>
             <button
               onClick={() => onGoToFavorites && onGoToFavorites()}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-sand/40"
+              className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-medium text-brand-dark hover:bg-brand-charcoal hover:text-white border-2 border-gray-300/50 hover:border-gray-400/50"
             >
               <Heart className="w-5 h-5" /> Favoritos
             </button>
-            <button className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-charcoal text-white text-sm font-medium">
+            <button className="btn-shimmer relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-charcoal text-white text-sm font-medium border-2 border-gray-400/50">
               <Settings className="w-5 h-5" /> Configuración
             </button>
           </nav>
@@ -130,10 +135,10 @@ const ConfigPage = ({
                 <img
                   src={user.profilePicture}
                   alt={user.displayName}
-                  className="w-12 h-12 rounded-full object-cover border border-brand-dark/10"
+                  className="w-12 h-12 rounded-full object-cover border border-brand-dark/10 ring-2 ring-gray-400/80 ring-offset-1"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold">
+                <div className="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-sm font-semibold ring-2 ring-gray-400/80 ring-offset-1">
                   {getInitials(user?.displayName)}
                 </div>
               )}
@@ -163,7 +168,7 @@ const ConfigPage = ({
           <div className="grid grid-cols-3 gap-6 items-stretch">
 
             {/* CARD 1: MI PERFIL (col-span-2) */}
-            <div className="col-span-2 bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border border-brand-sand/50 p-8 flex flex-col justify-between">
+            <div className="col-span-2 bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border-4 border-gray-300/50 p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-6">
                   <User className="w-5 h-5 text-brand-dark" />
@@ -175,10 +180,10 @@ const ConfigPage = ({
                     <img
                       src={user.profilePicture}
                       alt={user?.displayName}
-                      className="w-20 h-20 rounded-full object-cover border border-brand-dark/10 flex-shrink-0"
+                      className="w-20 h-20 rounded-full object-cover border border-brand-dark/10 flex-shrink-0 ring-2 ring-gray-400/80 ring-offset-1"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-xl font-semibold flex-shrink-0">
+                    <div className="w-20 h-20 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-xl font-semibold flex-shrink-0 ring-2 ring-gray-400/80 ring-offset-1">
                       {getInitials(user?.displayName)}
                     </div>
                   )}
@@ -228,7 +233,7 @@ const ConfigPage = ({
             </div>
 
             {/* CARD 2: CUENTA CONECTADA (col-span-1) */}
-            <div className="col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border border-brand-sand/50 p-8 flex flex-col justify-between">
+            <div className="col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border-4 border-gray-300/50 p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-6">
                   <Link className="w-5 h-5 text-brand-dark" />
@@ -261,7 +266,7 @@ const ConfigPage = ({
           <div className="grid grid-cols-2 gap-6 items-stretch">
 
             {/* CARD 3: MI PERFIL DE ESTILO */}
-            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border border-brand-sand/50 p-8 flex flex-col justify-between">
+            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border-4 border-gray-300/50 p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-6">
                   <Sparkles className="w-5 h-5 text-brand-dark" />
@@ -295,7 +300,7 @@ const ConfigPage = ({
             </div>
 
             {/* CARD 4: SESIÓN */}
-            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border border-brand-sand/50 p-8 flex flex-col justify-between">
+            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(44,42,41,0.06)] border-4 border-gray-300/50 p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-6">
                   <LogOut className="w-5 h-5 text-brand-dark" />
