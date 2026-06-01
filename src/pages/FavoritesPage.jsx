@@ -7,8 +7,6 @@ import {
   Settings,
   HelpCircle,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   LogOut,
   MapPin,
   Cloud,
@@ -20,27 +18,8 @@ import {
   Lightbulb,
 } from 'lucide-react';
 
-// VISIBLE cards shown at once in the carousel
-const VISIBLE = 3;
-
-// Ghost carousel data — placeholders until real outfits arrive
-const ghostCarouselCards = [
-  { id: 1, name: 'Outfit Recomendado 1', ocasion: 'Casual',  clima: 'Templado', dressCode: 'Smart Casual' },
-  { id: 2, name: 'Outfit Recomendado 2', ocasion: 'Trabajo', clima: 'Frío',     dressCode: 'Business'     },
-  { id: 3, name: 'Outfit Recomendado 3', ocasion: 'Casual',  clima: 'Cálido',   dressCode: 'Casual'       },
-  { id: 4, name: 'Outfit Recomendado 4', ocasion: 'Formal',  clima: 'Templado', dressCode: 'Black Tie'    },
-  { id: 5, name: 'Outfit Recomendado 5', ocasion: 'Social',  clima: 'Templado', dressCode: 'Smart Casual' },
-];
-
 // Icon pool for ghost cards
 const GHOST_ICONS = [Sparkles, Wand2, ShoppingBag, Shirt, Heart];
-
-const GHOST_NUM    = ghostCarouselCards.length;              // 5
-const MAX_INDEX    = GHOST_NUM - VISIBLE;                    // 2
-const NUM_DOTS     = GHOST_NUM - VISIBLE + 1;                // 3
-// Each card = 1/VISIBLE of the track container width (33.33%)
-// translateX step = (100/VISIBLE)% of the track element width (same value)
-const STEP_PCT     = 100 / VISIBLE;                          // 33.333…
 
 const FavoritesPage = ({
   user,
@@ -59,13 +38,8 @@ const FavoritesPage = ({
 }) => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showHelpPanel,   setShowHelpPanel]   = useState(false);
-  const [carouselIndex,   setCarouselIndex]   = useState(0);
-  const [isPaused,        setIsPaused]         = useState(false);
   const [filters,         setFilters]          = useState({ ocasion: '', clima: '', dressCode: '' });
   const [appliedFilters,  setAppliedFilters]   = useState({ ocasion: '', clima: '', dressCode: '' });
-  const [favoritos,       setFavoritos]        = useState(favoritosData);
-
-  useEffect(() => { setFavoritos(favoritosData); }, [favoritosData]);
   const profileMenuRef = useRef(null);
 
   // Close profile dropdown on outside click
@@ -79,28 +53,12 @@ const FavoritesPage = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Auto-slide every 3 s — pauses on hover, only runs when there is real data
-  useEffect(() => {
-    if (isPaused || favoritosData.length === 0) return;
-    const timer = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % NUM_DOTS);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [isPaused, carouselIndex, favoritosData.length]);
-
   const getInitials = (name) => {
     if (!name) return 'DM';
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
   };
 
-  const handlePrev = () =>
-    setCarouselIndex((p) => (p - 1 + NUM_DOTS) % NUM_DOTS);
-
-  const handleNext = () =>
-    setCarouselIndex((p) => (p + 1) % NUM_DOTS);
-
   const handleRemoveFavorite = (id) => {
-    setFavoritos((prev) => prev.filter((f) => f.id !== id));
     onRemoveFavorite(id);
   };
 
@@ -112,7 +70,7 @@ const FavoritesPage = ({
     setAppliedFilters(empty);
   };
 
-  const favoritosFiltrados = favoritos.filter((f) => {
+  const favoritosFiltrados = favoritosData.filter((f) => {
     if (appliedFilters.ocasion   && f.ocasion   !== appliedFilters.ocasion)   return false;
     if (appliedFilters.clima     && f.clima     !== appliedFilters.clima)     return false;
     if (appliedFilters.dressCode && f.dressCode !== appliedFilters.dressCode) return false;
@@ -334,24 +292,8 @@ const FavoritesPage = ({
               </div>
             ) : (
               /* ── CONTENIDO REAL ── */
-              <>{/* Grid / sin resultados tras filtrar / vacío por removes */}
-                {favoritos.length === 0 ? (
-                  <div className="rounded-3xl glass-effect p-16 text-center">
-                    <div className="flex items-center justify-center mb-4">
-                      <Heart className="w-12 h-12 text-brand-dark/40" />
-                    </div>
-                    <h3 className="text-xl font-serif font-bold text-brand-dark mb-2">Aún no tienes favoritos</h3>
-                    <p className="text-sm text-brand-dark/60 mb-6">
-                      Dale like a los outfits que te gusten para guardarlos aquí
-                    </p>
-                    <button
-                      onClick={() => onGoToOutfits && onGoToOutfits()}
-                      className="btn-shimmer relative inline-flex items-center gap-2 rounded-full bg-brand-charcoal px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 overflow-hidden"
-                    >
-                      <span className="relative z-10">Generar Outfits</span>
-                    </button>
-                  </div>
-                ) : favoritosFiltrados.length === 0 ? (
+              <>
+                {favoritosFiltrados.length === 0 ? (
                   <div className="rounded-3xl glass-effect p-12 text-center">
                     <p className="text-sm text-brand-dark/60 mb-4">
                       No hay favoritos que coincidan con los filtros seleccionados.
